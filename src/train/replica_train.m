@@ -8,7 +8,7 @@ function replica_rf = replica_train(atlas_struct, param_struct)
 %       param_struct: A struct containing the parameters for training.
 %
 %   Output:
-%       replica_rf: 
+%       replica_rf: replica random forest regressor
 
 % Size of patch in the original highest resolution
 patch_size = param_struct.patch_size;
@@ -115,7 +115,6 @@ for iter = 1:no_of_atlas_brains
         if param_struct.use_context_patch == 0
             AtlasPatches = zeros(L, no_of_training_samples);
             AtlasY = zeros(1, no_of_training_samples);
-            length(all_training_idxs)
             
             for viter = 1:length(all_training_idxs)
                 i = I1(viter);
@@ -131,7 +130,6 @@ for iter = 1:no_of_atlas_brains
         elseif param_struct.use_context_patch == 1
             AtlasPatches = zeros(L+32, no_of_training_samples);
             AtlasY = zeros(1, no_of_training_samples);
-            length(all_training_idxs)
             
             for viter = 1:length(all_training_idxs)
                 i = I1(viter);
@@ -152,7 +150,6 @@ for iter = 1:no_of_atlas_brains
         end
         
         FinalAtlasPatches = [FinalAtlasPatches, AtlasPatches];
-        size(FinalAtlasPatches)
         FinalAtlasY = [FinalAtlasY, AtlasY];
         
     elseif param_struct.synthFLAIR == 1
@@ -225,8 +222,6 @@ for iter = 1:no_of_atlas_brains
         orig_1 = floor(size(atlas_t1w)/2);
         [I1, J1, K1] = ind2sub(size(atlas_t1w), all_training_idxs);
         
-        length(all_training_idxs)
-        
         if param_struct.use_context_patch == 0
             AtlasPatches = zeros(3*L, length(all_training_idxs));
             
@@ -268,7 +263,6 @@ for iter = 1:no_of_atlas_brains
         end
         
         FinalAtlasPatches = [FinalAtlasPatches, AtlasPatches];
-        size(FinalAtlasPatches)
         FinalAtlasY = [FinalAtlasY, AtlasY];
         
     end

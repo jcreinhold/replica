@@ -61,7 +61,7 @@ param_struct.MinLeafSize = 5;
 %% Create atlas from example data
 
 % populate the atlas struct
-training_dir = '/Users/jreinhold/Research/Prince/Code/REPLICA_release_v01/data/';
+training_dir = '../REPLICA_release_v01/data/';
 
 % use data from 2 subjects for training
 training_subjects_list = {'01', '02'};

@@ -8,7 +8,7 @@ function subject_synthtrg = replica_predict(subject_struct, param_struct, replic
 %       replica_rfs: A cell array that has the trained REPLICA random forests
 %
 %   Output:
-%       subject_synthtrg: 
+%       subject_synthtrg: predicted synthetic subject image
 
 r1_1 = param_struct.r1_1;
 r2_1 = param_struct.r2_1;
@@ -108,7 +108,6 @@ if param_struct.synthT2 == 1
     disp('Predict for first image');
     testY = predict(ns, TestPatches(:, :)');
     
-    %     testY = predict(ns,TestPatches(1,:)');
     % Save the generated image
     subject_synthtrg = zeros(size(subject_t1w));
     subject_synthtrg(fg_idxs) = testY;
@@ -175,9 +174,9 @@ elseif param_struct.synthFLAIR == 1
             ii = i-((N(1) - 1) / 2):i+((N(1) - 1) / 2);
             jj = j-((N(2) - 1) / 2):j+((N(2) - 1) / 2);
             kk = k-((N(3) - 1) / 2):k+((N(3) - 1) / 2);
-            x1 = reshape(atlas_t1w(ii, jj, kk), [L, 1]);
-            x2 = reshape(atlas_t2w(ii, jj, kk), [L, 1]);
-            x3 = reshape(atlas_pdw(ii, jj, kk), [L, 1]);
+            x1 = reshape(subject_t1w(ii, jj, kk), [L, 1]);
+            x2 = reshape(subject_t2w(ii, jj, kk), [L, 1]);
+            x3 = reshape(subject_pdw(ii, jj, kk), [L, 1]);
             x = [x1; x2; x3];
             TestPatches(:, viter) = x;
         end
@@ -192,9 +191,9 @@ elseif param_struct.synthFLAIR == 1
             ii = i-((N(1) - 1) / 2):i+((N(1) - 1) / 2);
             jj = j-((N(2) - 1) / 2):j+((N(2) - 1) / 2);
             kk = k-((N(3) - 1) / 2):k+((N(3) - 1) / 2);
-            x1 = reshape(atlas_t1w(ii, jj, kk), [L, 1]);
-            x2 = reshape(atlas_t2w(ii, jj, kk), [L, 1]);
-            x3 = reshape(atlas_pdw(ii, jj, kk), [L, 1]);
+            x1 = reshape(subject_t1w(ii, jj, kk), [L, 1]);
+            x2 = reshape(subject_t2w(ii, jj, kk), [L, 1]);
+            x3 = reshape(subject_pdw(ii, jj, kk), [L, 1]);
             z = extract_context_patch(subject_t1w, i, j, k, r1_1, r2_1, r3_1, r4_1, w1_1, w2_1, w3_1, w4_1, orig_1);
             x = [x1; x2; x3; z];
             TestPatches(:, viter) = x;
