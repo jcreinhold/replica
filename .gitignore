@@ -1,0 +1,29 @@
+# Matlab temporary files
+*.mat
+*~
+
+# Prevent uploading of test files
+tmp
+
+# Latex documentation
+*.aux
+*.fls
+*.fdb_latexmk
+*.log
+*.xdv
+*.bbl
+*.blg
+*.out
+*.toc
+
+# Mac
+.DS_Store
+
+# Medical images
+*.hdr
+*.img
+*.mtx
+*.rar
+*.zip
+*.raw
+*.xml
