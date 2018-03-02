@@ -1,5 +1,5 @@
-function [I, J, K, orig, n] = get_train_samples(atlas_t1w, atlas_tgt, ps, lm)
-%GET_TRAIN_SAMPLES
+function [I, J, K, orig, n] = get_train_params(atlas_t1w, atlas_tgt, ps, lm)
+%GET_TRAIN_PARAMS
 %
 %   Args:
 %       atlas_t1w: T1-weighted atlas image

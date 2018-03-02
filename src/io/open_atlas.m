@@ -1,6 +1,7 @@
-function atlas = open_atlas(fn, ps, t1)
+function [atlas, dim] = open_atlas(fn, ps, t1)
 %OPEN_ATLAS open an atlas image and preprocess it
     tmp_atlas = load_untouch_nii(fn);
+    dim = size(tmp_atlas); % get original dimension for future processing
     tmp_atlas = double(tmp_atlas.img);
     threshold = 0.001 * median(tmp_atlas(:));
     if t1

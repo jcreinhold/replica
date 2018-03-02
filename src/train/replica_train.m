@@ -10,42 +10,36 @@ function replica_rf = replica_train(atlas_struct, param_struct)
 %   Output:
 %       replica_rf: replica random forest regressor
 
-n_training_samples = param_struct.no_of_training_samples;
-n_atlas_brains = length(atlas_struct.t1w);
-param_struct.n_training_samples_per_brain = ...
-    round(n_training_samples/n_atlas_brains);
+    % initialize some parameters
+    n_training_samples = param_struct.no_of_training_samples;
+    n_atlas_brains = length(atlas_struct.t1w);
+    param_struct.n_training_samples_per_brain = ...
+        round(n_training_samples/n_atlas_brains);
 
-% This will hold all the training patches for the highest resolution
-all_atlas_patches = [];
-all_atlas_Y = [];
+    % extract patches and values from atlases for regression training
+    all_atlas_patches = [];
+    all_atlas_Y = [];
 
-for i = 1:n_atlas_brains
-    if param_struct.synthT2 == 1
-        t1_fn = atlas_struct.t1w{i};
-        t2_fn = atlas_struct.t2w{i};
-        [atlas_patches, atlas_Y] = t2_train_patches(t1_fn, t2_fn);
+    for i = 1:n_atlas_brains
+        if param_struct.synthT2 == 1
+            [atlas_patches, atlas_Y] = t2_train_patches(atlas_struct, ...
+                                                        param_struct, i);
+        elseif param_struct.synthFLAIR == 1
+            [atlas_patches, atlas_Y] = flair_train_patches(atlas_struct, ...
+                                                           param_struct, i);
+        else
+            error(['param_struct.synthFLAIR or param_struct.synthT2', ...
+                   'needs to be set to 1']);
+        end
         all_atlas_patches = [all_atlas_patches, atlas_patches];
         all_atlas_Y = [all_atlas_Y, atlas_Y];
-    elseif param_struct.synthFLAIR == 1
-        t1_fn = atlas_struct.t1w{i};
-        t2_fn = atlas_struct.t2w{i};
-        pd_fn = atlas_struct.pdw{i};
-        fl_fn = atlas_struct.flair{i};
-        lm_fn = atlas_struct.lesionmask{i};
-        [atlas_patches, atlas_Y] = flair_train_patches(t1_fn, t2_fn, pd_fn, ...
-                                                fl_fn, lm_fn, param_struct);
-        all_atlas_patches = [all_atlas_patches, atlas_patches];
-        all_atlas_Y = [all_atlas_Y, atlas_Y];
-    else
-        error(['param_struct.synthFLAIR or param_struct.synthT2', ...
-               'needs to be set to 1']);
     end
-end
 
-options = statset('UseParallel', 'always');
-min_leaf_size = param_struct.MinLeafSize;
-ns = TreeBagger(param_struct.nTrees, all_atlas_patches(:, 1:end)', ...
-                all_atlas_Y(:, 1:end)', 'method', 'regression', ...
-                'MinLeafSize', min_leaf_size, 'Options', options, ...
-                'NumPrint', false);
-replica_rf{1} = ns;
+    % train the regression random forest and return it
+    options = statset('UseParallel', 'always');
+    min_leaf_size = param_struct.MinLeafSize;
+    replica_rf = TreeBagger(param_struct.nTrees, all_atlas_patches(:, 1:end)', ...
+                    all_atlas_Y(:, 1:end)', 'method', 'regression', ...
+                    'MinLeafSize', min_leaf_size, 'Options', options, ...
+                    'NumPrint', false);
+end

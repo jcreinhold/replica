@@ -1,17 +1,27 @@
-function [outputArg1,outputArg2] = save_synth(inputArg1,inputArg2)
-%SAVE_SYNTH Summary of this function goes here
-%   Detailed explanation goes here
-    subject_synthtrg = zeros(size(subject_t1w));
-    subject_synthtrg(fg_idxs) = testY;
-    dimcurr = size(subject_synthtrg);
-    dimcurr_rem = (dimcurr / 2 - floor(dimcurr/2));
-    delta = dimcurr_rem - dim0rem;
+function synth = save_synth(test_Y, ps, dim, fg)
+%SAVE_SYNTH save newly synthesized image
+%
+%   Args:
+%       test_Y: regression results
+%       ps: A struct containing the parameters for synthesis.
+%       dim: dimesion of synthesized image
+%       fg: foreground indices of synthesized image
+%
+%   Output:
+%       synth: synthesized image
     
-    subject_synthtrg = subject_synthtrg(4*(w4(1) + r4)+1:4*(w4(1) + r4)+dim_orig(1), ...
-                                        4*(w4(2) + r4)+1:4*(w4(2) + r4)+dim_orig(2), ...
-                                        4*(w4(3) + r4)+1:4*(w4(3) + r4)+dim_orig(3));
+    % setup the data structure for the synthesized image
+    subject_synthtrg = zeros(dim);
+    subject_synthtrg(fg) = test_Y;
+    i = 4*(ps.w4(1) + ps.r4)+1:4*(ps.w4(1) + ps.r4)+dim(1);
+    j = 4*(ps.w4(2) + ps.r4)+1:4*(ps.w4(2) + ps.r4)+dim(2);
+    k = 4*(ps.w4(3) + ps.r4)+1:4*(ps.w4(3) + ps.r4)+dim(3);
     
-    tmp_subject_src.img = subject_synthtrg;
+    % put synthesized image in correct format
+    synth = subject_synthtrg(i, j, k);
+    
+    % save the synthesized image
+    tmp_subject_src.img = synth;
     output_filename = subject_struct.output_filename;
     tmp_subject_src.fileprefix = output_filename;
     save_untouch_nii(tmp_subject_src, output_filename);

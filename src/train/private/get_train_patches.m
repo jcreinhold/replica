@@ -14,16 +14,18 @@ function [atlas_patches, atlas_Y] = get_train_patches(atlas_tgt, atlases, ps, lm
     patch_size = ps.patch_size;
     L = patch_size(1) * patch_size(2) * patch_size(3);
     
+    patch_size_multiplier = length(atlases);
+    
     if nargin > 3
-        [I, J, K, orig, n] = get_train_samples(atlas_t1w, atlas_tgt, ps, lm);
+        [I, J, K, orig, n] = get_train_params(atlas_t1w, atlas_tgt, ps, lm);
     else
-        [I, J, K, orig, n] = get_train_samples(atlas_t1w, atlas_tgt, ps);
+        [I, J, K, orig, n] = get_train_params(atlas_t1w, atlas_tgt, ps);
     end
     
     if ps.use_context_patch == 0
-        atlas_patches = zeros(3*L, n);     
+        atlas_patches = zeros(patch_size_multiplier*L, n);     
     elseif ps.use_context_patch == 1
-        atlas_patches = zeros(3*L+32, n);
+        atlas_patches = zeros(patch_size_multiplier*L+32, n);
     else
         error('param_struct.use_context_patch needs to be 0 or 1');
     end

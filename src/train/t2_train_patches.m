@@ -1,20 +1,20 @@
-function [atlas_patches, atlas_Y] = t2_train_patches(t1_fn, t2_fn, ps)
+function [atlas_patches, atlas_Y] = t2_train_patches(as, ps, i)
 %T2_TRAIN_PATCHES Summary of this function goes here
 %
 %   Args:
-%       t1_fn: full filename of T1w atlas image
-%       t2_fn: full filename of T2w atlas image
+%       as: atlas struct containing filenames for atlas
 %       ps: A struct containing the parameters for training.
+%       i: iteration number
 %
 %   Output:
 %       atlas_patches:
 %       atlas_Y:
 
     % open all atlas images and lesion masks
-    atlas_t1w = open_atlas(t1_fn, ps, true);clo
+    [atlas_t1w, ~] = open_atlas(as.t1w{i}, ps, true);
     
     % set the T2w image as the target
-    atlas_tgt = open_atlas(t2_fn, ps, false);
+    atlas_tgt = open_atlas(as.t2w{i}, ps, false);
     
     % put atlas images in ordered array for organized processing
     atlases = {atlas_t1w};
