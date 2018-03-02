@@ -22,35 +22,15 @@ param_struct.use_context_patch = 1;
 param_struct.threshold = 0;
 
 % set the context patch parameters
-param_struct.r1_1 = 4;
-param_struct.r2_1 = 8;
-param_struct.r3_1 = 16;
-param_struct.r4_1 = 32;
+param_struct.r1 = 4;
+param_struct.r2 = 8;
+param_struct.r3 = 16;
+param_struct.r4 = 32;
 
-param_struct.w1_1 = [3, 3, 3];
-param_struct.w2_1 = [5, 5, 5];
-param_struct.w3_1 = [7, 7, 7];
-param_struct.w4_1 = [9, 9, 9];
-
-param_struct.r1_2 = 2;
-param_struct.r2_2 = 4;
-param_struct.r3_2 = 8;
-param_struct.r4_2 = 16;
-
-param_struct.w1_2 = [3, 3, 3];
-param_struct.w2_2 = [5, 5, 5];
-param_struct.w3_2 = [7, 7, 7];
-param_struct.w4_2 = [9, 9, 9];
-
-param_struct.r1_4 = 2;
-param_struct.r2_4 = 4;
-param_struct.r3_4 = 8;
-param_struct.r4_4 = 16;
-
-param_struct.w1_4 = [1, 1, 1];
-param_struct.w2_4 = [3, 3, 3];
-param_struct.w3_4 = [5, 5, 5];
-param_struct.w4_4 = [7, 7, 7];
+param_struct.w1 = [3, 3, 3];
+param_struct.w2 = [5, 5, 5];
+param_struct.w3 = [7, 7, 7];
+param_struct.w4 = [9, 9, 9];
 
 % number of trees
 param_struct.nTrees = 30;

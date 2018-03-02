@@ -10,35 +10,15 @@ function subject_synthtrg = replica_predict(subject_struct, param_struct, replic
 %   Output:
 %       subject_synthtrg: predicted synthetic subject image
 
-r1_1 = param_struct.r1_1;
-r2_1 = param_struct.r2_1;
-r3_1 = param_struct.r3_1;
-r4_1 = param_struct.r4_1;
+r1 = param_struct.r1;
+r2 = param_struct.r2;
+r3 = param_struct.r3;
+r4 = param_struct.r4;
 
-w1_1 = param_struct.w1_1;
-w2_1 = param_struct.w2_1;
-w3_1 = param_struct.w3_1;
-w4_1 = param_struct.w4_1;
-
-r1_2 = param_struct.r1_2;
-r2_2 = param_struct.r2_2;
-r3_2 = param_struct.r3_2;
-r4_2 = param_struct.r4_2;
-
-w1_2 = param_struct.w1_2;
-w2_2 = param_struct.w2_2;
-w3_2 = param_struct.w3_2;
-w4_2 = param_struct.w4_2;
-
-r1_4 = param_struct.r1_4;
-r2_4 = param_struct.r2_4;
-r3_4 = param_struct.r3_4;
-r4_4 = param_struct.r4_4;
-
-w1_4 = param_struct.w1_4;
-w2_4 = param_struct.w2_4;
-w3_4 = param_struct.w3_4;
-w4_4 = param_struct.w4_4;
+w1 = param_struct.w1;
+w2 = param_struct.w2;
+w3 = param_struct.w3;
+w4 = param_struct.w4;
 
 % p = gcp('nocreate'); % If no pool, do not create new one.
 % if isempty(p)
@@ -58,7 +38,7 @@ if param_struct.synthT2 == 1
     
     dim_orig = size(subject_t1w);
     
-    subject_t1w = padarray(subject_t1w, 4*[w4_1(1) + r4_1, w4_1(2) + r4_1, w4_1(3) + r4_1]);
+    subject_t1w = padarray(subject_t1w, 4*[w4(1) + r4, w4(2) + r4, w4(3) + r4]);
     dim0 = size(subject_t1w);
     dim0rem = 1 - (dim0 / 2 - floor(dim0/2));
     orig_1 = floor(size(subject_t1w)/2);
@@ -96,8 +76,8 @@ if param_struct.synthT2 == 1
             kk = k-((N(3) - 1) / 2):k+((N(3) - 1) / 2);
             x1 = reshape(subject_t1w(ii, jj, kk), [L, 1]);
             z = extract_context_patch(subject_t1w, i, j, k, ...
-                                      r1_1, r2_1, r3_1, r4_1, ...
-                                      w1_1, w2_1, w3_1, w4_1, orig_1);
+                                      r1, r2, r3, r4, ...
+                                      w1, w2, w3, w4, orig_1);
             x = [x1; z];
             TestPatches(:, viter) = x;
             
@@ -105,7 +85,6 @@ if param_struct.synthT2 == 1
     end
     ns = replica_rfs{1};
     
-    disp('Predict for first image');
     testY = predict(ns, TestPatches(:, :)');
     
     % Save the generated image
@@ -115,11 +94,9 @@ if param_struct.synthT2 == 1
     dimcurr_rem = (dimcurr / 2 - floor(dimcurr/2));
     delta = dimcurr_rem - dim0rem;
     
-    subject_synthtrg = subject_synthtrg(4*(w4_1(1) + r4_1)+1:4*(w4_1(1) + r4_1)+dim_orig(1), ...
-                                        4*(w4_1(2) + r4_1)+1:4*(w4_1(2) + r4_1)+dim_orig(2), ...
-                                        4*(w4_1(3) + r4_1)+1:4*(w4_1(3) + r4_1)+dim_orig(3));
-    
-    disp('Save first as nii');
+    subject_synthtrg = subject_synthtrg(4*(w4(1) + r4)+1:4*(w4(1) + r4)+dim_orig(1), ...
+                                        4*(w4(2) + r4)+1:4*(w4(2) + r4)+dim_orig(2), ...
+                                        4*(w4(3) + r4)+1:4*(w4(3) + r4)+dim_orig(3));
     
     tmp_subject_src.img = subject_synthtrg;
     output_filename = subject_struct.output_filename;
@@ -141,18 +118,15 @@ elseif param_struct.synthFLAIR == 1
     threshold_t2w = 0.001 * median_t2w;
     subject_t2w = wm_peak_normalize_T2w(subject_t2w, threshold_t2w);
     
-    
     tmp_subject_pdw = load_untouch_nii(subject_struct.pdw);
     subject_pdw = double(tmp_subject_pdw.img);
     median_pdw = median(subject_pdw(:));
     threshold_pdw = 0.001 * median_pdw;
     subject_pdw = wm_peak_normalize_T2w(subject_pdw, threshold_pdw);
     
-    
-    subject_t1w = padarray(subject_t1w, 4*[w4_1(1) + r4_1, w4_1(2) + r4_1, w4_1(3) + r4_1]);
-    subject_t2w = padarray(subject_t2w, 4*[w4_1(1) + r4_1, w4_1(2) + r4_1, w4_1(3) + r4_1]);
-    subject_pdw = padarray(subject_pdw, 4*[w4_1(1) + r4_1, w4_1(2) + r4_1, w4_1(3) + r4_1]);
-    
+    subject_t1w = padarray(subject_t1w, 4*[w4(1) + r4, w4(2) + r4, w4(3) + r4]);
+    subject_t2w = padarray(subject_t2w, 4*[w4(1) + r4, w4(2) + r4, w4(3) + r4]);
+    subject_pdw = padarray(subject_pdw, 4*[w4(1) + r4, w4(2) + r4, w4(3) + r4]);
     
     dim0 = size(subject_t1w);
     dim0rem = 1 - (dim0 / 2 - floor(dim0/2));
@@ -194,7 +168,9 @@ elseif param_struct.synthFLAIR == 1
             x1 = reshape(subject_t1w(ii, jj, kk), [L, 1]);
             x2 = reshape(subject_t2w(ii, jj, kk), [L, 1]);
             x3 = reshape(subject_pdw(ii, jj, kk), [L, 1]);
-            z = extract_context_patch(subject_t1w, i, j, k, r1_1, r2_1, r3_1, r4_1, w1_1, w2_1, w3_1, w4_1, orig_1);
+            z = extract_context_patch(subject_t1w, i, j, k, ...
+                                      r1, r2, r3, r4, ... 
+                                      w1, w2, w3, w4, orig_1);
             x = [x1; x2; x3; z];
             TestPatches(:, viter) = x;
             
@@ -202,7 +178,6 @@ elseif param_struct.synthFLAIR == 1
     end
     
     ns = replica_rfs{1};
-    disp('Predict for first image');
     testY = predict(ns, TestPatches(:, :)');
     
     % Save the generated image
@@ -212,11 +187,9 @@ elseif param_struct.synthFLAIR == 1
     dimcurr_rem = (dimcurr / 2 - floor(dimcurr/2));
     delta = dimcurr_rem - dim0rem;
     
-    subject_synthtrg = subject_synthtrg(4*(w4_1(1) + r4_1)+1:4*(w4_1(1) + r4_1)+dim_orig(1), ...
-                                        4*(w4_1(2) + r4_1)+1:4*(w4_1(2) + r4_1)+dim_orig(2), ...
-                                        4*(w4_1(3) + r4_1)+1:4*(w4_1(3) + r4_1)+dim_orig(3));
-    
-    disp('Save first as nii');
+    subject_synthtrg = subject_synthtrg(4*(w4(1) + r4)+1:4*(w4(1) + r4)+dim_orig(1), ...
+                                        4*(w4(2) + r4)+1:4*(w4(2) + r4)+dim_orig(2), ...
+                                        4*(w4(3) + r4)+1:4*(w4(3) + r4)+dim_orig(3));
     
     tmp_subject_src.img = subject_synthtrg;
     output_filename = subject_struct.output_filename;
