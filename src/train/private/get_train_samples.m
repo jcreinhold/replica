@@ -1,13 +1,18 @@
-function [I, J, K, orig, n] = determine_training_samples(atlas_t1w, ps, lm)
-%DETERMINE_TRAINING_SAMPLES Summary of this function goes here
+function [I, J, K, orig, n] = get_train_samples(atlas_t1w, atlas_tgt, ps, lm)
+%GET_TRAIN_SAMPLES
 %
 %   Args:
 %       atlas_t1w: T1-weighted atlas image
+%       atlas_tgt: target atlas image
 %       ps: A struct containing the parameters for training.
 %       lm: lesion mask
 %
 %   Output:
-%       
+%       I:
+%       J:
+%       K:
+%       orig:
+%       n: number of training samples
 
     % assumes that the background = 0 and tissue intensities are  > 0
     src_fg = atlas_t1w(atlas_t1w > 0);
@@ -19,7 +24,7 @@ function [I, J, K, orig, n] = determine_training_samples(atlas_t1w, ps, lm)
     for qiter = 2:length(yq)
         curr_idxs = find(atlas_t1w > yq(qiter-1) & ...
                          atlas_t1w <= yq(qiter) & ...
-                         atlas_trg > ps.threshold);
+                         atlas_tgt > ps.threshold);
         if isempty(curr_idxs)
             continue;
         end
@@ -28,11 +33,11 @@ function [I, J, K, orig, n] = determine_training_samples(atlas_t1w, ps, lm)
     end
     curr_idxs = find(atlas_t1w > yq(qiter) & ...
                      atlas_t1w <= max(atlas_t1w(:)) & ...
-                     atlas_trg > ps.threshold);
+                     atlas_tgt > ps.threshold);
     indices_idxs = randi(length(curr_idxs), no_quantile_voxels, 1);
     all_training_idxs = [all_training_idxs; curr_idxs(indices_idxs)];
     
-    if nargin > 2
+    if nargin > 3
         lesion_idxs = find(lm == 1);
         all_training_idxs = [all_training_idxs; lesion_idxs];
     end

@@ -10,52 +10,42 @@ function replica_rf = replica_train(atlas_struct, param_struct)
 %   Output:
 %       replica_rf: replica random forest regressor
 
-% enable parallel processing if desired
-p = gcp('nocreate'); % If no pool, do not create new one.
-if isempty(p)
-    poolsize = 0;
-else
-    poolsize = 8;
-end
-
 n_training_samples = param_struct.no_of_training_samples;
-n_atlas_brains = param_struct.n_atlas_brains
-n_training_samples_per_brain = ...
+n_atlas_brains = length(atlas_struct.t1w);
+param_struct.n_training_samples_per_brain = ...
     round(n_training_samples/n_atlas_brains);
 
 % This will hold all the training patches for the highest resolution
-FinalAtlasPatches = [];
-FinalAtlasY = [];
+all_atlas_patches = [];
+all_atlas_Y = [];
 
 for i = 1:n_atlas_brains
-    
-    % check if synthesizing T2 from T1
     if param_struct.synthT2 == 1
         t1_fn = atlas_struct.t1w{i};
         t2_fn = atlas_struct.t2w{i};
-        [AtlasPatches, AtlasY] = synth_t2_train(t1_fn, t2_fn);
-        FinalAtlasPatches = [FinalAtlasPatches, AtlasPatches];
-        FinalAtlasY = [FinalAtlasY, AtlasY];
-        
+        [atlas_patches, atlas_Y] = t2_train_patches(t1_fn, t2_fn);
+        all_atlas_patches = [all_atlas_patches, atlas_patches];
+        all_atlas_Y = [all_atlas_Y, atlas_Y];
     elseif param_struct.synthFLAIR == 1
         t1_fn = atlas_struct.t1w{i};
         t2_fn = atlas_struct.t2w{i};
         pd_fn = atlas_struct.pdw{i};
         fl_fn = atlas_struct.flair{i};
         lm_fn = atlas_struct.lesionmask{i};
-        [AtlasPatches, AtlasY] = synth_t2_train(t1_fn, t2_fn, pd_fn, ...
+        [atlas_patches, atlas_Y] = flair_train_patches(t1_fn, t2_fn, pd_fn, ...
                                                 fl_fn, lm_fn, param_struct);
-        FinalAtlasPatches = [FinalAtlasPatches, AtlasPatches];
-        FinalAtlasY = [FinalAtlasY, AtlasY];
-        
+        all_atlas_patches = [all_atlas_patches, atlas_patches];
+        all_atlas_Y = [all_atlas_Y, atlas_Y];
+    else
+        error(['param_struct.synthFLAIR or param_struct.synthT2', ...
+               'needs to be set to 1']);
     end
 end
 
-tic;
 options = statset('UseParallel', 'always');
 min_leaf_size = param_struct.MinLeafSize;
-ns = TreeBagger(param_struct.nTrees, FinalAtlasPatches(:, 1:end)', ...
-                FinalAtlasY(:, 1:end)', 'method', 'regression', ...
-                'MinLeafSize', min_leaf_size, 'Options', options);
-toc;
+ns = TreeBagger(param_struct.nTrees, all_atlas_patches(:, 1:end)', ...
+                all_atlas_Y(:, 1:end)', 'method', 'regression', ...
+                'MinLeafSize', min_leaf_size, 'Options', options, ...
+                'NumPrint', false);
 replica_rf{1} = ns;

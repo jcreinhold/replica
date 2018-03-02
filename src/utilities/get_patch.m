@@ -1,31 +1,42 @@
-function patches = get_patch(atlas, i, j, k, orig, ps)
+function patches = get_patch(atlases, i, j, k, orig, L, ps)
 %GET_PATCH get a specified patch
-
-    patch_size = ps.patch_size;
-    L = patch_size(1) * patch_size(2) * patch_size(3);
+%
+%   Args:
+%       atlases: array of atlases to extract patches from
+%       i: patch center in first component
+%       j: patch center in second component
+%       k: patch center in third component
+%       orig:
+%       ps: param_struct
+%
+%   Output:
+%       patch: 
     
     patches = [];
     
-    for a=atlas
-        [ii, jj, kk] = patch_indices(i, j, k, patch_size);
-        patches = [patches; reshape(a(ii, jj, kk), [L, 1])];
+    for a=1:length(atlases)
+        atlas = atlases{a};
+        [ii, jj, kk] = patch_indices(i, j, k, ps.patch_size);
+        patches = [patches; reshape(atlas(ii, jj, kk), [L, 1])];
     end
     
     if ps.use_context_patch == 1
-        ctx_patch = extract_context_patch(a(1), i, j, k, ...
+        % T1w image will always be the first element of the atlases array
+        ctx_patch = extract_context_patch(atlases{1}, i, j, k, ...
                                   ps.r1, ps.r2, ps.r3, ps.r4, ...
                                   ps.w1, ps.w2, ps.w3, ps.w4, orig);
         patches = [patches; ctx_patch];
     end
 end
 
+
 function [ii, jj, kk] = patch_indices(i, j, k, patch_size)
 %PATCH_INDICES Get the patch indices given a patch size and center
 %
 %   Args:
 %       i: patch center in first component
-%       i: patch center in second component
-%       i: patch center in third component
+%       j: patch center in second component
+%       k: patch center in third component
 %       patch_size: 3-dim vector with size of each component
 %
 %   Output:
