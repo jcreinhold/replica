@@ -72,7 +72,7 @@ replica_rfs = replica_train(atlas_struct, param_struct);
 %% Synthesize subject data using the trained random forest
 
 % specify the subject data
-test_subjects_list = {'03', '04', '05'};
+test_subjects_list = {'03'};%, '04', '05'};
 test_dir = training_dir; % same as training dir in this case.
 
 for iter = 1:length(test_subjects_list)

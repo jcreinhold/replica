@@ -14,7 +14,9 @@ function [atlas_patches, atlas_Y] = flair_train_patches(as, ps, i)
     [atlas_t1w, ~] = open_atlas(as.t1w{i}, ps, true);
     [atlas_t2w, ~] = open_atlas(as.t2w{i}, ps, false);
     [atlas_pdw, ~] = open_atlas(as.pdw{i}, ps, false);
-    atlas_lm = open_lesionmask(as.lesionmask{i}, ps);
+    if isfield(as, 'lesionmask')
+        atlas_lm = open_lesionmask(as.lesionmask{i}, ps);
+    end
 
     % set the FLAIR image as the target
     atlas_tgt = open_atlas(as.flair{i}, ps, false);
@@ -23,7 +25,11 @@ function [atlas_patches, atlas_Y] = flair_train_patches(as, ps, i)
     atlases = {atlas_t1w, atlas_t2w, atlas_pdw};
     
     % pull out the patches to be used in training given the atlases
-    [atlas_patches, atlas_Y] = get_train_patches(atlas_tgt, atlases, ...
-                                                 ps, atlas_lm);
+    if isfield(as, 'lesionmask')
+        [atlas_patches, atlas_Y] = get_train_patches(atlas_tgt, atlases, ...
+                                                     ps, atlas_lm);
+    else
+        [atlas_patches, atlas_Y] = get_train_patches(atlas_tgt, atlases, ps);
+    end
 end
 
