@@ -9,10 +9,10 @@ param_struct.patch_size = [3,3,3];
 param_struct.no_of_training_samples = 1E5;
 
 % 1 if task is to synthesize T2w images from T1w images
-param_struct.synthT2 = 1;
+param_struct.synthT2 = 0;
 
 % 1 if task is to synthesize FLAIR images from T1w, T2w, PDw
-param_struct.synthFLAIR = 0;
+param_struct.synthFLAIR = 1;
 
 % if you want to use a context patch in the feature set in addition
 % to the local patch
@@ -72,7 +72,7 @@ replica_rfs = replica_train(atlas_struct, param_struct);
 %% Synthesize subject data using the trained random forest
 
 % specify the subject data
-test_subjects_list = {'03'};%, '04', '05'};
+test_subjects_list = {'03', '04', '05'};
 test_dir = training_dir; % same as training dir in this case.
 
 for iter = 1:length(test_subjects_list)
