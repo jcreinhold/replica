@@ -21,16 +21,7 @@ function replica_rf = replica_train(atlas_struct, param_struct)
     all_atlas_Y = [];
 
     for i = 1:n_atlas_brains
-        if param_struct.synthT2 == 1
-            [atlas_patches, atlas_Y] = t2_train_patches(atlas_struct, ...
-                                                        param_struct, i);
-        elseif param_struct.synthFLAIR == 1
-            [atlas_patches, atlas_Y] = flair_train_patches(atlas_struct, ...
-                                                           param_struct, i);
-        else
-            error(['param_struct.synthFLAIR or param_struct.synthT2', ...
-                   'needs to be set to 1']);
-        end
+        [atlas_patches, atlas_Y] = train_patches(atlas_struct, param_struct, i);
         all_atlas_patches = [all_atlas_patches, atlas_patches];
         all_atlas_Y = [all_atlas_Y, atlas_Y];
     end

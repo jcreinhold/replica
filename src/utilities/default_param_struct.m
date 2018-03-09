@@ -1,7 +1,7 @@
 function param_struct = default_param_struct()
 %DEFAULT_PARAM_STRUCT create a default param_struct for ease-of-use
 % User will still need to specify the task for REPLICA by setting 
-% synthT2 or synthFLAIR to 1
+% target to 't2w', 'pdw', or 'flair'
 
     % set parameters for training the random forest
     param_struct.patch_size = [3,3,3];
@@ -9,11 +9,8 @@ function param_struct = default_param_struct()
     % number of samples to be used for training
     param_struct.no_of_training_samples = 1E5;
 
-    % 1 if task is to synthesize T2w images from T1w images
-    param_struct.synthT2 = 0; % user needs to set this value to 0,1
-
-    % 1 if task is to synthesize FLAIR images from T1w, T2w, PDw
-    param_struct.synthFLAIR = 0; % user needs to set this value to 0,1
+    % user needs to set to 't2w', 'pdw', or 'flair'
+    param_struct.target = '';
 
     % if you want to use a context patch in the feature set in addition
     % to the local patch

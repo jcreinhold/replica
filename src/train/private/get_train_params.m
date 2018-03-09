@@ -1,4 +1,4 @@
-function [I, J, K, orig, n] = get_train_params(atlas_t1w, atlas_tgt, ps, lm)
+function [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps, lm)
 %GET_TRAIN_PARAMS
 %
 %   Args:
@@ -24,7 +24,7 @@ function [I, J, K, orig, n] = get_train_params(atlas_t1w, atlas_tgt, ps, lm)
     for qiter = 2:length(yq)
         curr_idxs = find(atlas_t1w > yq(qiter-1) & ...
                          atlas_t1w <= yq(qiter) & ...
-                         atlas_tgt > ps.threshold);
+                         target > ps.threshold);
         if isempty(curr_idxs)
             continue;
         end
@@ -33,7 +33,7 @@ function [I, J, K, orig, n] = get_train_params(atlas_t1w, atlas_tgt, ps, lm)
     end
     curr_idxs = find(atlas_t1w > yq(qiter) & ...
                      atlas_t1w <= max(atlas_t1w(:)) & ...
-                     atlas_tgt > ps.threshold);
+                     target > ps.threshold);
     indices_idxs = randi(length(curr_idxs), no_quantile_voxels, 1);
     all_training_idxs = [all_training_idxs; curr_idxs(indices_idxs)];
     

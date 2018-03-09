@@ -22,11 +22,13 @@ param_struct.use_context_patch = 1;
 param_struct.threshold = 0;
 
 % set the context patch parameters
+% radius
 param_struct.r1 = 4;
 param_struct.r2 = 8;
 param_struct.r3 = 16;
 param_struct.r4 = 32;
 
+% cube widths
 param_struct.w1 = [3, 3, 3];
 param_struct.w2 = [5, 5, 5];
 param_struct.w3 = [7, 7, 7];

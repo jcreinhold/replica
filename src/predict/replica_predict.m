@@ -11,16 +11,7 @@ function synth = replica_predict(subject_struct, param_struct, replica_rf)
 %       synth: predicted synthetic subject image
 
     % extract the patches on which to do regression
-    if param_struct.synthT2 == 1
-        [test_patches, dim, fg] = t2_predict_patches(subject_struct, ...
-                                                     param_struct);
-    elseif param_struct.synthFLAIR == 1
-        [test_patches, dim, fg] = flair_predict_patches(subject_struct, ...
-                                                        param_struct);
-    else
-        error(['param_struct.synthFLAIR or param_struct.synthT2', ...
-               'needs to be set to 1']);
-    end
+    [test_patches, dim, fg] = predict_patches(subject_struct, param_struct);
     
     % predict the values of the synthesized image
     test_Y = predict(replica_rf, test_patches(:, :)');

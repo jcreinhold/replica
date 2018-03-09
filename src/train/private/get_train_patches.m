@@ -1,5 +1,5 @@
-function [atlas_patches, atlas_Y] = get_train_patches(atlas_tgt, atlases, ps, lm)
-%GET_TRAIN_PATCHES Summary of this function goes here
+function [atlas_patches, atlas_Y] = get_train_patches(target, atlases, ps, lm)
+%GET_TRAIN_PATCHES gets patches for REPLICA training
 %
 %   Args:
 %       atlases: 
@@ -17,9 +17,9 @@ function [atlas_patches, atlas_Y] = get_train_patches(atlas_tgt, atlases, ps, lm
     patch_size_multiplier = length(atlases);
     
     if nargin > 3
-        [I, J, K, orig, n] = get_train_params(atlas_t1w, atlas_tgt, ps, lm);
+        [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps, lm);
     else
-        [I, J, K, orig, n] = get_train_params(atlas_t1w, atlas_tgt, ps);
+        [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps);
     end
     
     if ps.use_context_patch == 0
@@ -37,7 +37,7 @@ function [atlas_patches, atlas_Y] = get_train_patches(atlas_tgt, atlases, ps, lm
         k = K(viter);
         patches = get_patch(atlases, i, j, k, orig, L, ps);
         atlas_patches(:, viter) = patches;
-        atlas_Y(viter) = atlas_tgt(i, j, k);
+        atlas_Y(viter) = target(i, j, k);
     end
 end
 
