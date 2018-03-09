@@ -2,43 +2,8 @@
 
 %% Set training parameters
 
-% set parameters for training the random forest
-param_struct.patch_size = [3,3,3];
-
-% number of samples to be used for training
-param_struct.no_of_training_samples = 1E5;
-
-% 1 if task is to synthesize T2w images from T1w images
-param_struct.synthT2 = 0;
-
-% 1 if task is to synthesize FLAIR images from T1w, T2w, PDw
-param_struct.synthFLAIR = 1;
-
-% if you want to use a context patch in the feature set in addition
-% to the local patch
-param_struct.use_context_patch = 1;
-
-% threshold for intensities in target (no negative intensities in foreground)
-param_struct.threshold = 0;
-
-% set the context patch parameters
-% radius
-param_struct.r1 = 4;
-param_struct.r2 = 8;
-param_struct.r3 = 16;
-param_struct.r4 = 32;
-
-% cube widths
-param_struct.w1 = [3, 3, 3];
-param_struct.w2 = [5, 5, 5];
-param_struct.w3 = [7, 7, 7];
-param_struct.w4 = [9, 9, 9];
-
-% number of trees
-param_struct.nTrees = 30;
-
-% MinLeafSize for each tree
-param_struct.MinLeafSize = 5;
+param_struct = default_param_struct();
+param_struct.target = 'flair';
 
 %% Create atlas from example data
 
@@ -62,9 +27,6 @@ for iter = 1:length(training_subjects_list)
     atlas_struct.pdw{iter} = atlas_pdw_file;
     atlas_struct.flair{iter} = atlas_flair_file;
     atlas_struct.lesionmask{iter} = atlas_lesionmask_file;
-    
-    % fix the target
-    atlas_struct.target{iter} = atlas_flair_file;
 end
 
 %% Train the random forest
