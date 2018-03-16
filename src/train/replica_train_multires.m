@@ -65,12 +65,16 @@ for iter=1:n_atlas_brains
     FinalAtlasPatchessub4 = [FinalAtlasPatchessub4,AtlasPatchessub4];
     FinalAtlasYsub4 = [FinalAtlasYsub4,AtlasYsub4];
     
+    % memory management, need to break these sections into functions!
+    clearvars atlas_src_sub4 AtlasPatchessub4 AtlasYsub4
+    
     % get patches for the intermediate resolution images
     fprintf('Getting patches for sub2 resolution on iter: %d\n', iter);
     
     res_atlas_trg_sub4  = interp3(atlas_trg_sub4, 1);
     res_atlas_trg_sub4 = interp3(res_atlas_trg_sub4, g2{1}, g2{2}, g2{3});
     [I, J, K, orig, n, ~] = get_params_multires(atlas_src_sub2, ps);
+    clearvars g2
     
     AtlasPatchessub2 = zeros(Lsub2+L2sub2+32,n);
     AtlasYsub2 = zeros(1,n);
@@ -96,6 +100,9 @@ for iter=1:n_atlas_brains
     FinalAtlasPatchessub2 = [FinalAtlasPatchessub2,AtlasPatchessub2];
     FinalAtlasYsub2 = [FinalAtlasYsub2,AtlasYsub2];
     
+    % memory management, need to break these sections into functions!
+    clearvars atlas_trg_sub4 atlas_src_sub2 res_atlas_trg_sub4 AtlasPatchessub2 AtlasYsub2
+    
     % Get patches for the highest resolution image
     fprintf('Getting patches for full resolution on iter: %d\n', iter);
     
@@ -105,6 +112,7 @@ for iter=1:n_atlas_brains
     [I, J, K, orig, n] = get_train_params(atlas_src, atlas_trg, ps);
     res_atlas_trg_sub2 = interp3(atlas_trg_sub2, 1);
     res_atlas_trg_sub2  = interp3(res_atlas_trg_sub2, g1{1}, g1{2}, g1{3});
+    clearvars g1  % clear this ASAP since it is >2 GB
     
     AtlasPatches = zeros(L+L2+32,n);
     AtlasY = zeros(1,n);
@@ -130,6 +138,8 @@ for iter=1:n_atlas_brains
     FinalAtlasPatches = [FinalAtlasPatches,AtlasPatches];
     FinalAtlasY = [FinalAtlasY,AtlasY];
     
+    % memory management, need to break these sections into functions!
+    clearvars atlas_src atlas_trg atlas_trg_sub2 res_atlas_trg_sub2 AtlasPatches AtlasY
 end
 
 clearvars -except ps ...
