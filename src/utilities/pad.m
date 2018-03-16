@@ -1,6 +1,6 @@
-function out = pad(img, ps)
+function out = pad(img, w, r)
 %PAD pad image according to (some) specificiation
-    pad = 4*[ps.w4(1) + ps.r4, ps.w4(2) + ps.r4, ps.w4(3) + ps.r4];
+    pad = 4*[w(1) + r, w(2) + r, w(3) + r];
     out = padarray(img, pad);
 end
 

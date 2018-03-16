@@ -39,7 +39,8 @@ function [atlas_patches, atlas_Y] = train_patches(as, ps, i)
     
     % pull out the patches to be used in training given the atlases
     if isfield(as, 'lesionmask')
-        [atlas_patches, atlas_Y] = get_train_patches(target, atlases, ps, lm);
+        [atlas_patches, atlas_Y] = get_train_patches(target, atlases, ps, ...
+                                                     'LesionMask', lm);
     else
         [atlas_patches, atlas_Y] = get_train_patches(target, atlases, ps);
     end

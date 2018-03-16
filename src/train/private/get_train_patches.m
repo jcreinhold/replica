@@ -1,4 +1,4 @@
-function [atlas_patches, atlas_Y] = get_train_patches(target, atlases, ps, lm)
+function [atlas_patches, atlas_Y] = get_train_patches(target, atlases, ps, varargin)
 %GET_TRAIN_PATCHES gets patches for REPLICA training
 %
 %   Args:
@@ -9,6 +9,13 @@ function [atlas_patches, atlas_Y] = get_train_patches(target, atlases, ps, lm)
 %       atlas_patches:
 %       atlas_Y:
 
+    % parse arguments to account for optional args
+    p = inputParser;
+    p.addOptional('LesionMask', false);
+    p.addOptional('MultiResolution', false);
+    p.parse(varargin{:})
+    opts = p.Results;
+    
     atlas_t1w = atlases{1};  % T1w-image will always be first element
     
     patch_size = ps.patch_size;
@@ -16,7 +23,7 @@ function [atlas_patches, atlas_Y] = get_train_patches(target, atlases, ps, lm)
     
     patch_size_multiplier = length(atlases);
     
-    if nargin > 3
+    if opts.LesionMask
         [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps, lm);
     else
         [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps);

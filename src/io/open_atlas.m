@@ -9,6 +9,6 @@ function [atlas, dim] = open_atlas(fn, ps, t1)
         tmp_atlas = wm_peak_normalize_T2w(tmp_atlas, threshold);
     end
     dim = size(tmp_atlas); % get original dimension for future processing
-    atlas = pad(tmp_atlas, ps);
+    atlas = pad(tmp_atlas, ps.w4, ps.r4);
 end
 
