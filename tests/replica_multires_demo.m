@@ -1,5 +1,4 @@
 %% Example use case of REPLICA multiresolution 
-% don't use this if you can avoid it
 
 %% Set training parameters
 
@@ -26,6 +25,7 @@ end
 %% Train the random forest
 
 replica_rfs = replica_train_multires(atlas_struct, param_struct);
+save('replica_rfs.mat', 'replica_rfs', 'training_dir', 'param_struct');
 
 %% Synthesize subject data using the trained random forest
 

@@ -31,7 +31,7 @@ function [patches, fg] = multires_predict_patches(src, ps, res, rs_src)
         ctx_patch = extract_context_patch(src, i, j, k, ...
                                   r1, r2, r3, r4, ...
                                   w1, w2, w3, w4, orig);
-        if res < 3
+        if res > 1
             [ii2, jj2, kk2] = patch_indices(i, j, k, N2);
             patch2 = reshape(rs_src(ii2, jj2, kk2), [L2, 1]);
             p = [patch1; patch2; ctx_patch];

@@ -18,16 +18,16 @@ H = fspecial3('gaussian', ps.gaussian_kernel_size);
 % resolutions over which to calculate rfs
 resolutions = {'low', 'intermediate', 'high'};
 
-[subject, dim] = open_atlas(subject_struct.source, ps, true);
+[subject, dim] = open_atlas(subject_struct.source, ps.w4{3}, ps.r4{3}, true);
 for r=1:3
     fprintf('getting patches for %s resolution\n', resolutions{r});
     [src, g] = multiresolution(subject, H, r);
     if r > 1
         rs_src = interp3(synth, 1);
         rs_src = interp3(rs_src, g{1}, g{2}, g{3});
-        [p, fg] = multires_predict_patches(src, ps, r, rs_src);
+        [p, fg] = predict_patches_multires(src, ps, r, rs_src);
     else
-        [p, fg] = multires_predict_patches(src, ps, r, []);
+        [p, fg] = predict_patches_multires(src, ps, r, []);
     end
     fprintf('predict %s resolution image\n', resolutions{r});
     y = predict(replica_rfs{r}, p(:,:)');
@@ -37,6 +37,6 @@ for r=1:3
 end
 
 % Save the synthesized image
-synth = save_synth(y, subject_struct, ps.w4{1}, ps.r4{1}, dim, fg);
+synth = save_synth(y, subject_struct, ps.w4{3}, ps.r4{3}, dim, fg);
 end
 

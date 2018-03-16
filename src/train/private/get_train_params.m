@@ -46,4 +46,3 @@ function [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps, lm)
     orig = floor(size(atlas_t1w)/2);
     n = length(all_training_idxs);
 end
-

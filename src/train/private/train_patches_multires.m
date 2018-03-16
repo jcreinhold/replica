@@ -1,4 +1,4 @@
-function [patches, y] = multires_train_patches(src, trg, ps, res, rs_trg)
+function [patches, y] = train_patches_multires(src, trg, ps, res, rs_trg)
     if res == 3
         % below is a hack to make there be 9000 no_quantile_voxels 
         % (replicates old code behavior)
@@ -11,7 +11,7 @@ function [patches, y] = multires_train_patches(src, trg, ps, res, rs_trg)
     N = ps.N{res};
     L = prod(N);
     patches_num = L;
-    if res < 3
+    if res > 1
         N2 = ps.N2{res};
         L2 = prod(N2);
         patches_num = patches_num + L2;
@@ -27,8 +27,9 @@ function [patches, y] = multires_train_patches(src, trg, ps, res, rs_trg)
     w4 = ps.w4{res};
     
     patches = zeros(patches_num+32, n);
+    y = zeros(1,n);
     
-    parfor viter=1:n
+    for viter=1:n
         i = I(viter);
         j = J(viter);
         k = K(viter);
@@ -38,7 +39,7 @@ function [patches, y] = multires_train_patches(src, trg, ps, res, rs_trg)
         ctx_patch = extract_context_patch(src, i, j, k, ...
                                   r1, r2, r3, r4, ...
                                   w1, w2, w3, w4, orig);
-        if res < 3
+        if res > 1
             [ii2, jj2, kk2] = patch_indices(i, j, k, N2);
             patch2 = reshape(rs_trg(ii2, jj2, kk2), [L2, 1]);
             p = [patch1; patch2; ctx_patch];
@@ -47,7 +48,7 @@ function [patches, y] = multires_train_patches(src, trg, ps, res, rs_trg)
         end
         
         patches(:,viter) = p;
+        y(viter) = trg(i,j,k);
     end
-    y = reshape(trg(I,J,K),[1,n]);
 end
 

@@ -10,22 +10,23 @@ n_atlas_brains = length(atlas_struct.source);
 ps.n_training_samples_per_brain = ...
     round(n_training_samples/n_atlas_brains);
 H = fspecial3('gaussian', ps.gaussian_kernel_size);
+opts = statset('UseParallel', 'always');
 
 % holds training patches for low, itermediate, high resolution
 patches = {[], [], []};
 ys = {[], [], []};
 
-% holds trained random forests
-replica_rfs = cell(3,1);
+% rf temp filenames
+rf_tmp = {tempname, tempname, tempname};
 
 % resolutions over which to calculate rfs
 resolutions = {'low', 'intermediate', 'high'};
 
-for iter=1:n_atlas_brains
-    % open the source and target images
-    [atlas_src, ~] = open_atlas(atlas_struct.source{iter}, ps, true);
-    [atlas_trg, ~] = open_atlas(atlas_struct.target{iter}, ps, false);
-    for r=1:3
+for r=1:3
+    for iter=1:n_atlas_brains
+        % open the source and target images
+        [atlas_src, ~] = open_atlas(atlas_struct.source{iter}, ps.w4{3}, ps.r4{3}, true);
+        [atlas_trg, ~] = open_atlas(atlas_struct.target{iter}, ps.w4{3}, ps.r4{3}, false);
         fprintf('getting patches for %s resolution on iter %d\n', ...
                 resolutions{r}, iter);
         [trg, ~] = multiresolution(atlas_trg, H, r);
@@ -33,25 +34,30 @@ for iter=1:n_atlas_brains
         if r > 1
             rs_trg = interp3(trg, 1);
             rs_trg = interp3(rs_trg, g{1}, g{2}, g{3});
-            [p, y] = multires_train_patches(src, trg, ps, r, rs_trg);
+            [p, y] = train_patches_multires(src, trg, ps, r, rs_trg);
         else
-            [p, y] = multires_train_patches(src, trg, ps, r, []);
+            [p, y] = train_patches_multires(src, trg, ps, r, []);
         end
         patches{r} = [patches{r}, p];
         ys{r} = [ys{r}, y];
     end
+    fprintf('training for %s resolution\n', resolutions{r});
+    replica_rf = TreeBagger(ps.nTrees{r}, p(:,1:end)', y(:,1:end)', ...
+                            'method','regression', 'Options', opts);
+               
+    save([rf_tmp{r} '.mat'], 'replica_rf'); 
+    clearvars replica_rf patches ys trg src g
 end
 
 % manual memory management, since some of the objects get very large
-clearvars -except ps patches ys resolutions
+clearvars -except rf_tmp
 
-opts = statset('UseParallel', 'always');
+% holds trained random forests
+replica_rfs = cell(3,1);
+
 for r=1:3
-    fprintf('training for %s resolution\n', resolutions{r});
-    p = patches{r};
-    y = ys{r};
-    replica_rfs{r} = TreeBagger(ps.nTrees{r}, p(:,1:end)', y(:,1:end)', ...
-                                'method','regression', 'Options', opts);
+    load(rf_tmp{r});
+    replica_rfs{r} = replica_rf;
 end
 
 end
