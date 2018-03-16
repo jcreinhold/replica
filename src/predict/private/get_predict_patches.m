@@ -16,7 +16,7 @@ function [test_patches, fg] = get_predict_patches(subject_images, ps)
     
     patch_size_multiplier = length(subject_images);
     
-    [I, J, K, orig, n, fg] = get_predict_params(subject_t1w);
+    [I, J, K, orig, n, fg] = get_predict_params(subject_t1w, ps);
 
     if ps.use_context_patch == 0
         test_patches = zeros(patch_size_multiplier*L, n);     

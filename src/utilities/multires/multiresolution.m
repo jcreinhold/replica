@@ -1,13 +1,12 @@
-function [img_interp, img_ds2, img_ds4, grid1, grid2, grid4] = multiresolution(img, H)
+function [img, grid] = multiresolution(img, H, res)
 %MULTIRESOLUTION create 3 different resolution images
-    % reinterpolate the original image
-    [img_interp, grid1] = reinterpolate(img);
-
-    % Low-pass filter and downsample by 2
-    [img_ds2, grid2] = downsample_by_2(img_interp, H);
-
-    % Low-pass filter and downsample by 2, again!
-    [img_ds4, grid4] = downsample_by_2(img_ds2, H);
+    [img, grid] = reinterpolate(img);
+    if res > 1
+        [img, grid] = downsample_by_2(img, H);
+    end
+    if res > 2
+        [img, grid] = downsample_by_2(img, H);
+    end
 end
 
 function [img_interp, interp_grid] = reinterpolate(img)
