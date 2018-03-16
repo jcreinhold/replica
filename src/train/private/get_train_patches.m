@@ -12,7 +12,6 @@ function [atlas_patches, atlas_Y] = get_train_patches(target, atlases, ps, varar
     % parse arguments to account for optional args
     p = inputParser;
     p.addOptional('LesionMask', false);
-    p.addOptional('MultiResolution', false);
     p.parse(varargin{:})
     opts = p.Results;
     

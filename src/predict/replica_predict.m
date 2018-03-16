@@ -17,5 +17,7 @@ function synth = replica_predict(subject_struct, param_struct, replica_rf)
     test_Y = predict(replica_rf, test_patches(:, :)');
     
     % Save the generated image
-    synth = save_synth(test_Y, subject_struct, param_struct, dim, fg);
+    synth = save_synth(test_Y, subject_struct, ...
+                       param_struct.w4, param_struct.r4, ...
+                       dim, fg);
 end

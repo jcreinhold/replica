@@ -12,8 +12,9 @@ function [ii, jj, kk] = patch_indices(i, j, k, patch_size)
 %       jj: indices of patch for second component
 %       kk: indices of patch for third component
 
-    ii = i-((patch_size(1) - 1) / 2):i+((patch_size(1) - 1) / 2);
-    jj = j-((patch_size(2) - 1) / 2):j+((patch_size(2) - 1) / 2);
-    kk = k-((patch_size(3) - 1) / 2):k+((patch_size(3) - 1) / 2);
+    % should not need to use round here since all patches are odd
+    ii = round(i-((patch_size(1) - 1) / 2):i+((patch_size(1) - 1) / 2));
+    jj = round(j-((patch_size(2) - 1) / 2):j+((patch_size(2) - 1) / 2));
+    kk = round(k-((patch_size(3) - 1) / 2):k+((patch_size(3) - 1) / 2));
 end
 

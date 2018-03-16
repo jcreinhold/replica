@@ -13,9 +13,9 @@ get_param_struct_params(ps)
 
 % initialize some parameters
 n_training_samples = ps.no_of_training_samples;
-n_atlas_brains = length(atlas_struct.source);
+n_subject_brains = length(subject_struct.source);
 ps.n_training_samples_per_brain = ...
-    round(n_training_samples/n_atlas_brains);
+    round(n_training_samples/n_subject_brains);
 H = fspecial3('gaussian', ps.gaussian_kernel_size);
 
 % open the source and target images
@@ -74,7 +74,7 @@ for viter=1:n
     [ii2, jj2, kk2] = patch_indices(i, j, k, N2sub2);
     x = reshape(subject_src_sub2(ii, jj, kk), [Lsub2, 1]);
     z1 = reshape(res_subject_synthtrg_sub4(ii2, jj2, kk2), [L2sub2, 1]);
-    z3 = extract_context_patch(atlas_src_sub2, i, j, k, ...
+    z3 = extract_context_patch(subject_src_sub2, i, j, k, ...
                                r1_2, r2_2, r3_2, r4_2, ...
                                w1_2, w2_2, w3_2, w4_2, orig);
                          
@@ -110,7 +110,7 @@ for viter=1:n
     [ii2, jj2, kk2] = patch_indices(i, j, k, N2);
     x = reshape(subject_src(ii, jj, kk), [L, 1]);
     z1 = reshape(res_subject_synthtrg_sub2(ii2, jj2, kk2), [L2, 1]);
-    z3 = extract_context_patch(atlas_src, i, j, k, ...
+    z3 = extract_context_patch(subject_src, i, j, k, ...
                                r1_1, r2_1, r3_1, r4_1, ...
                                w1_1, w2_1, w3_1, w4_1, orig);
     x = [x;z3;z1];
@@ -123,6 +123,6 @@ ns = replica_rfs{3};
 testY = predict(ns,TestPatches(:,:)');
 
 % Save the synthesized image
-synth = save_synth(testY, subject_struct, ps, dim, fg);
+synth = save_synth(testY, subject_struct, ps.w4{1}, ps.r4{1}, dim, fg);
 end
 

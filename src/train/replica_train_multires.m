@@ -17,15 +17,15 @@ ps.n_training_samples_per_brain = ...
 H = fspecial3('gaussian', ps.gaussian_kernel_size);
 
 % Holds all the training patches for the lowest resolution
-FinalAtlasPatchessub4  =[];
+FinalAtlasPatchessub4 = [];
 FinalAtlasYsub4 = [];
 
 % Holds all the training patches for the intermediate resolution
-FinalAtlasPatchessub2  =[];
+FinalAtlasPatchessub2 = [];
 FinalAtlasYsub2 = [];
 
 % Holds all the training patches for the highest resolution
-FinalAtlasPatches  =[];
+FinalAtlasPatches = [];
 FinalAtlasY = [];
 
 for iter=1:n_atlas_brains
@@ -131,7 +131,7 @@ for iter=1:n_atlas_brains
     FinalAtlasY = [FinalAtlasY,AtlasY];
     
 end
-%%
+
 clearvars -except ps ...
     FinalAtlasPatchessub4 FinalAtlasYsub4 ...
     FinalAtlasPatchessub2 FinalAtlasYsub2 ...
@@ -143,13 +143,14 @@ nssub4 = TreeBagger(ps.nTrees4, FinalAtlasPatchessub4(:,1:end)', ...
                     FinalAtlasYsub4(:,1:end)','method','regression', ...
                     'Options', options);
 replica_rf{1} = nssub4;
-
+clearvars FinalAtlasPatchessub4 FinalAtlasYsub4
 
 disp('Training for sub2 resolution');
 nssub2 = TreeBagger(ps.nTrees2, FinalAtlasPatchessub2(:,1:end)', ...
                     FinalAtlasYsub2(:,1:end)','method','regression', ...
                     'Options', options);
 replica_rf{2} = nssub2;
+clearvars FinalAtlasPatchessub2 FinalAtlasYsub2
 
 disp('Training for full resolution');
 min_leaf_size = ps.MinLeafSize;
@@ -157,5 +158,6 @@ ns = TreeBagger(ps.nTrees, FinalAtlasPatches(:,1:end)', ...
                 FinalAtlasY(:,1:end)','method','regression', ...
                 'MinLeafSize', min_leaf_size, 'Options', options);
 replica_rf{3} = ns;
+clearvars FinalAtlasPatches FinalAtlasY
 
 end
