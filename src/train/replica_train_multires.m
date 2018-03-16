@@ -131,6 +131,11 @@ for iter=1:n_atlas_brains
     FinalAtlasY = [FinalAtlasY,AtlasY];
     
 end
+%%
+clearvars -except ps ...
+    FinalAtlasPatchessub4 FinalAtlasYsub4 ...
+    FinalAtlasPatchessub2 FinalAtlasYsub2 ...
+    FinalAtlasPatches FinalAtlasY
 
 disp('Training for sub4 resolution');
 options = statset('UseParallel', 'always');
