@@ -2,11 +2,13 @@
 REPLICA: An MRI image synthesis algorithm
 ---------------------------------------------------------------------------
 
-The files included implement the algorithm described in [1].
+The files included implement the algorithm described in [1]. Given a set of
+training images of different contrasts (an atlas), train a random forest 
+regressor to output values of a target contrast. Can use single resolution
+or multiresolution features 
+(although the inputs to either pathway are different!)
  
-This code has been tested on MATLAB 2015 and 2016 versions.
-Some of the parallelzing code has changed from 2014 onwards
-so those lines need to be edited for backward compatibility.
+This code has been tested on MATLAB 2017b.
 
 Code Author: Amod Jog (v1)
              Jacob Reinhold (v2) (jacob.reinhold@jhu.edu)
@@ -21,7 +23,7 @@ References
 ---------------------------------------------------------------------------
 Project Structure
 ---------------------------------------------------------------------------
-REPLICA_v02
+replica
 |
 |---src (source code)
 |   |   
@@ -33,13 +35,11 @@ REPLICA_v02
 |   |   
 |   |---predict (functions for aligning speech parameters)
 |   |   |   replica_predict (apply the trained random forest and synthesize images)
-|   |   |   flair_predict_patches (get patches from subject images for FLAIR synth)
-|   |   |   t2_predict_patches (get patches from subject images for T2w synth)
+|   |   |   replica_predict_multires (same, but w/ multires features)
 |   |
 |   |---train (functions for automatically aligning and synthesizing speech)
 |   |   |   replica_train (extract features and train the random forest for REPLICA)
-|   |   |   flair_train_patches (get patches from atlas images for FLAIR synth)
-|   |   |   t2_train_patches (get patches from atlas images for T2w synth)
+|   |   |   replica_train_multires (same, but w/ multires features)
 |   |
 |   |---utilities (miscellaneous functions used in processing)
 |   |   |   extract_context_patch (extract a context descriptor, see [1])
@@ -47,12 +47,15 @@ REPLICA_v02
 |   |   |       [not sure if this is actually for T1w, or just an old version]
 |   |   |   wm_peak_normalize_T2w (scale T2w images by fixing the WM hist peak to 1000)
 |   |   |   peakdet (detect local minima and maxima in a vector)
-|   |   |   get_patch (get a patch from an image, used in training and prediction)
+|   |   |   patch_indices (get indices that comprise a patch)
+|   |   |   pad (pads the input image according to some specification)
 |   |   |   wm_ref_normalize (routine [not used] for normalizing an image to a reference)
+|   |   |   wm_peak_normalize_fcm (routine [not used] for normalizing wm peak w/ FCM)
+|   |   |---multires (routines specific to multiresolution pipeline)
+|   |   |---singleres (routines specific to single resolution pipeline)
 |
 |---tests (unit tests, demos)
-|   | replica_demo (example REPLICA training and synthesis, 
-|   |               a. T2w images from T1w images, and 
-|   |               b. FLAIR images from T1w, T2w, and PDw images)
+|   | replica_demo (example single resolution REPLICA training and synthesis)
+|   | replica_demo_multires (same, but multires)
 |
 |---docs (documentation)
