@@ -23,10 +23,6 @@ ps.n_training_samples_per_brain = ...
 H = fspecial3('gaussian', ps.gaussian_kernel_size);
 opts = statset('UseParallel', 'always');
 
-% holds training patches for low, itermediate, high resolution
-patches = {[], [], []};
-ys = {[], [], []};
-
 % rf temp filenames
 rf_tmp = {tempname, tempname, tempname};
 
@@ -34,14 +30,17 @@ rf_tmp = {tempname, tempname, tempname};
 resolutions = {'low', 'intermediate', 'high'};
 
 for r=1:3
+    % holds training patches, y for one resolution before cleared
+    patches = [];
+    ys = [];
     for iter=1:n_atlas_brains
         % open the source and target images
-        [atlas_src, ~] = open_atlas(atlas_struct.source{iter}, ps.w4{3}, ps.r4{3}, true);
-        [atlas_trg, ~] = open_atlas(atlas_struct.target{iter}, ps.w4{3}, ps.r4{3}, false);
+        [src, ~] = open_atlas(atlas_struct.source{iter}, ps.w4{3}, ps.r4{3}, true);
+        [trg, ~] = open_atlas(atlas_struct.target{iter}, ps.w4{3}, ps.r4{3}, false);
         fprintf('getting patches for %s resolution on iter %d\n', ...
                 resolutions{r}, iter);
-        [trg, ~] = multiresolution(atlas_trg, H, r);
-        [src, g] = multiresolution(atlas_src, H, r);
+        [trg, ~] = multiresolution(trg, H, r);
+        [src, g] = multiresolution(src, H, r);
         if r > 1
             rs_trg = interp3(trg, 1);
             rs_trg = interp3(rs_trg, g{1}, g{2}, g{3});
@@ -49,15 +48,15 @@ for r=1:3
         else
             [p, y] = train_patches_multires(src, trg, ps, r, []);
         end
-        patches{r} = [patches{r}, p];
-        ys{r} = [ys{r}, y];
+        patches = [patches, p];
+        ys = [ys, y];
     end
     fprintf('training for %s resolution\n', resolutions{r});
-    replica_rf = TreeBagger(ps.nTrees{r}, p(:,1:end)', y(:,1:end)', ...
+    replica_rf = TreeBagger(ps.nTrees{r}, patches(:,1:end)', ys(:,1:end)', ...
                             'method','regression', 'Options', opts);
                
     save([rf_tmp{r} '.mat'], 'replica_rf'); 
-    clearvars replica_rf patches ys trg src g
+    clearvars replica_rf patches ys src trg g
 end
 
 % manual memory management, since some of the objects get very large
