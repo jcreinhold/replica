@@ -18,7 +18,7 @@ function [patches, fg] = predict_patches_multires(src, ps, res, rs_src)
     N = ps.N{res};
     L = prod(N);
     patches_num = L;
-    if res < 3
+    if res > 1
         N2 = ps.N2{res};
         L2 = prod(N2);
         patches_num = patches_num + L2;
@@ -35,7 +35,7 @@ function [patches, fg] = predict_patches_multires(src, ps, res, rs_src)
     
     patches = zeros(patches_num+32, n);
     
-    parfor viter=1:n
+    for viter=1:n
         i = I(viter);
         j = J(viter);
         k = K(viter);
