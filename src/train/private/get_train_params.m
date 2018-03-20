@@ -14,8 +14,7 @@ function [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps, lm)
 %       orig: origin (middle of image)
 %       n: size of foreground in voxels
 
-    % assumes that the background = 0 and tissue intensities are  > 0
-    src_fg = atlas_t1w(atlas_t1w > 0);
+    src_fg = atlas_t1w(atlas_t1w > ps.threshold);
 
     yq = quantile(src_fg, 100);
     yq = [0, yq];
