@@ -11,10 +11,10 @@ function [img, grid] = multiresolution(img, H, res)
 %       grid: grid on which img was reinterpd or downsamped
 
     [img, grid] = reinterpolate(img);
-    if res > 1
+    if res <= 2
         [img, grid] = downsample_by_2(img, H);
     end
-    if res > 2
+    if res <= 1
         [img, grid] = downsample_by_2(img, H);
     end
 end
