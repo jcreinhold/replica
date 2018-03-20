@@ -1,4 +1,16 @@
 function [patches, y] = train_patches_multires(src, trg, ps, res, rs_trg)
+%TRAIN_PATCHES_MULTIRES get patches for training REPLICA random forest
+% for target images using all images provided by user
+%
+%   Args:
+%       as: atlas struct
+%       ps: A struct containing the parameters for training.
+%       i: iteration number
+%
+%   Output:
+%       patches: array of the actual patches
+%       y: array of the value of the target image at those patches
+
     if res == 3
         % below is a hack to make there be 9000 no_quantile_voxels 
         % (replicates old code behavior)

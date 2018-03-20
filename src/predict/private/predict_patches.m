@@ -1,5 +1,5 @@
 function [test_patches, dim, fg] = predict_patches(ss, ps)
-%FLAIR_PREDICT_PATCHES extract patches to do regression on w/ RF
+%PREDICT_PATCHES extract patches to do regression on w/ RF
 % specific to synthesizing target images from T1w, T2w, PDw, FLAIR images
 %
 %   Args:

@@ -1,5 +1,16 @@
 function replica_rfs = replica_train_multires(atlas_struct, param_struct)
 %REPLICA_training trains a multiresolution REPLICA random forest
+%   given atlases and parameters for training
+%
+%   Args:
+%       atlas_struct: Refer to replica_demo.m to specify parameters in this
+%                     struct
+%       param_struct: A struct containing the parameters for training
+%           (see utilities/multires/default_param_struct_multires.m for
+%            an example of the parameters)
+%
+%   Output:
+%       replica_rf: replica random forest regressor
 
 % rename for convenience, since this is used all over
 ps = param_struct;

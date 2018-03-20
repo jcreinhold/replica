@@ -6,7 +6,8 @@ function replica_rf = replica_train(atlas_struct, param_struct)
 %       atlas_struct: Refer to replica_demo.m to specify parameters in this
 %                     struct
 %       param_struct: A struct containing the parameters for training.
-%
+%          (see utilities/singleres/default_param_struct.m for an example 
+%           of the parameters)
 %   Output:
 %       replica_rf: replica random forest regressor
 

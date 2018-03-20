@@ -1,9 +1,15 @@
 function synth = replica_predict_multires(subject_struct, param_struct, replica_rfs)
-%REPLICA_prediction: This function takes in the trained REPLICA random forests and predicts the synthetic image for an input subject image set.
-%   subject_struct: Has filenames for input subject images
-%   params_struct: Has the parameter set with which REPLICA was trained
-%   replica_rfs: A cell array that has the trained REPLICA random forests
-%   for each scale (starting from coarsest in 1 to finest in 3)
+%REPLICA_PREDICT_MULTIRES takes in the trained REPLICA random forests and 
+% predicts the synthetic image for an input subject image set using
+% multiresolution features
+%
+%   Args:
+%       subject_struct: Has filenames for input subject images
+%       params_struct: Has the parameter set with which REPLICA was trained
+%       replica_rfs: cell array of trained REPLICA random forest
+%
+%   Output:
+%       synth: predicted synthetic subject image
 
 % rename for convenience, since this is used all over
 ps = param_struct;

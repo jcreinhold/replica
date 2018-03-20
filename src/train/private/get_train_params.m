@@ -1,5 +1,5 @@
 function [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps, lm)
-%GET_TRAIN_PARAMS
+%GET_TRAIN_PARAMS get parameters necessary to train REPLICA rf,
 %
 %   Args:
 %       atlas_t1w: T1-weighted atlas image
@@ -8,11 +8,11 @@ function [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps, lm)
 %       lm: lesion mask
 %
 %   Output:
-%       I:
-%       J:
-%       K:
-%       orig:
-%       n: number of training samples
+%       I: middle x-axis indices to extract patches from
+%       J: middle y-axis indices to extract patches from
+%       K: middle z-axis indices to extract patches from
+%       orig: origin (middle of image)
+%       n: size of foreground in voxels
 
     % assumes that the background = 0 and tissue intensities are  > 0
     src_fg = atlas_t1w(atlas_t1w > 0);

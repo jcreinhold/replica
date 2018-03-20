@@ -4,9 +4,15 @@ function contextPatch = extract_context_patch(I, i, j, k, ...
 %EXTRACT_CONTEXT_PATCH extracts context descriptors, see [1]
 %
 %   Args:
+%       I: image
+%       i: x-axis patch middle index
+%       j: y-axis patch middle index
+%       k: z-axis patch middle index
+%       r1-r4,w1-w4: see [1], context feature section
+%       orig: origin of image (generally, middle of image)
 %
 %   Output:
-%       contextPatch 
+%       contextPatch: see [1] for more info.
 %
 %   References:
 %     [1] A. Jog, et al., ``Random forest regression for magnetic resonance

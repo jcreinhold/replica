@@ -1,5 +1,15 @@
 function [img, grid] = multiresolution(img, H, res)
-%MULTIRESOLUTION create 3 different resolution images
+%MULTIRESOLUTION create 3 different resolution images based on user input
+%
+%   Args:
+%       img: img to operate on
+%       H: convolving kernel (see fspecial3)
+%       res: resolution number (1=low,2=med,3=high)
+%
+%   Output:
+%       img: reinterpolated or downsampled img
+%       grid: grid on which img was reinterpd or downsamped
+
     [img, grid] = reinterpolate(img);
     if res > 1
         [img, grid] = downsample_by_2(img, H);

@@ -1,4 +1,18 @@
-function [patches, fg] = multires_predict_patches(src, ps, res, rs_src)
+function [patches, fg] = predict_patches_multires(src, ps, res, rs_src)
+%MULTIRES_PREDICT_PATCHES extract patches to do regression on w/ RF
+% specific to synthesizing target images from T1w, T2w, PDw, FLAIR images
+%
+%   Args:
+%       src: subject image of interest (source)
+%       ps: A struct containing the parameters for synthesis.
+%       res: resolution number (1=low,2=med,3=high)
+%       rs_src: resampled src (to get everything in the right dimension)
+%
+%   Output:
+%       test_patches: patches on which to do regression (from ss)
+%       dim: dimension of synthesized image (for saving result image)
+%       fg: foreground indices (for saving result image)
+
     [I, J, K, orig, n, fg] = get_params_multires(src, ps);
     
     N = ps.N{res};

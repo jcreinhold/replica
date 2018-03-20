@@ -9,6 +9,8 @@ function synth = save_synth(test_Y, ss, w, r, dim, fg)
 %
 %   Output:
 %       synth: synthesized image
+%       (synth is also saved to a file whose name is equal to the name in
+%       subject_struct.output_filename (ss.output_filename)
     
     % setup the data structure for the synthesized image
     subject_synthtrg = pad(zeros(dim), w, r);  % make target img correct size
