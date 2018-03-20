@@ -9,7 +9,7 @@ function param_struct = default_param_struct_multires()
 
     % patch sizes for double downsampled, downsampled, and original
     param_struct.N = {[3,3,3], [3,3,3], [3,3,3]};
-    % for iterped, downsampled and original, respectively
+    % for iterped downsampled and interpd original, respectively
     param_struct.N2 = {[1,1,1], [1,1,1]};
 
     % context patch parameters

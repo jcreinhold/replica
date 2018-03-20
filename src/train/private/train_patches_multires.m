@@ -24,7 +24,7 @@ function [patches, y] = train_patches_multires(src, trg, ps, res, rs_trg)
     L = prod(N);
     patches_num = L;
     if res > 1
-        N2 = ps.N2{res};
+        N2 = ps.N2{res-1};
         L2 = prod(N2);
         patches_num = patches_num + L2;
     end
@@ -41,7 +41,7 @@ function [patches, y] = train_patches_multires(src, trg, ps, res, rs_trg)
     patches = zeros(patches_num+32, n);
     y = zeros(1,n);
     
-    for viter=1:n
+    parfor viter=1:n
         i = I(viter);
         j = J(viter);
         k = K(viter);

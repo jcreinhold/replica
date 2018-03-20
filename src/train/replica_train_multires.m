@@ -23,7 +23,7 @@ ps.n_training_samples_per_brain = ...
 H = fspecial3('gaussian', ps.gaussian_kernel_size);
 opts = statset('UseParallel', 'always');
 
-% rf temp filenames
+% save individual RF models to HD in temp files to free memory
 rf_tmp = {tempname, tempname, tempname};
 
 % resolutions over which to calculate rfs
@@ -53,9 +53,8 @@ for r=1:3
     end
     fprintf('training for %s resolution\n', resolutions{r});
     replica_rf = TreeBagger(ps.nTrees{r}, patches(:,1:end)', ys(:,1:end)', ...
-                            'method','regression', 'Options', opts);
-               
-    save([rf_tmp{r} '.mat'], 'replica_rf'); 
+                            'method','regression', 'Options', opts);    
+    save([rf_tmp{r} '.mat'], 'replica_rf', '-v7.3'); 
     clearvars replica_rf patches ys src trg g
 end
 
@@ -66,8 +65,11 @@ clearvars -except rf_tmp
 replica_rfs = cell(3,1);
 
 for r=1:3
-    load(rf_tmp{r});
+    fn = rf_tmp{r};
+    load(fn, 'replica_rf');
     replica_rfs{r} = replica_rf;
+    % ensure temp files are deleted ASAP, since they are rather large
+    delete fn
 end
 
 end
