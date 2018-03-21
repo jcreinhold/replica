@@ -19,7 +19,7 @@ function [patches, fg] = predict_patches_multires(src, ps, res, rs_src)
     L = prod(N);
     patches_num = L;
     if res > 1
-        N2 = ps.N2{res};
+        N2 = ps.N2{res-1};
         L2 = prod(N2);
         patches_num = patches_num + L2;
     end

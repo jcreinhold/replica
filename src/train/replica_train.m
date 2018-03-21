@@ -22,12 +22,14 @@ function replica_rf = replica_train(atlas_struct, param_struct)
     all_atlas_Y = [];
 
     for i = 1:n_atlas_brains
+        fprintf('getting patches for atlas %d\n', i);
         [atlas_patches, atlas_Y] = train_patches(atlas_struct, param_struct, i);
         all_atlas_patches = [all_atlas_patches, atlas_patches];
         all_atlas_Y = [all_atlas_Y, atlas_Y];
     end
 
     % train the regression random forest and return it
+    fprintf('training random forest\n');
     options = statset('UseParallel', 'always');
     min_leaf_size = param_struct.MinLeafSize;
     replica_rf = TreeBagger(param_struct.nTrees, all_atlas_patches(:, 1:end)', ...

@@ -13,7 +13,7 @@ function [atlas_patches, atlas_Y] = train_patches(as, ps, i)
 
     % open target contrast images
     target_fns = as.(ps.target);
-    target = open_atlas(target_fns{i}, ps, false);
+    target = open_atlas(target_fns{i}, ps.w4, ps.r4, false);
     
     % open all atlas images and lesion masks and
     % put atlas images in ordered cell for organized processing
@@ -46,7 +46,7 @@ function [atlas_patches, atlas_Y] = train_patches(as, ps, i)
     end
 end
 
-function [atlas_patches, atlas_Y] = get_train_patches(target, atlases, patch_size, ps, varargin)
+function [atlas_patches, atlas_Y] = get_train_patches(target, atlases, ps, varargin)
 %GET_TRAIN_PATCHES gets patches for REPLICA training
 %
 %   Args:
@@ -63,10 +63,8 @@ function [atlas_patches, atlas_Y] = get_train_patches(target, atlases, patch_siz
     p.parse(varargin{:})
     opts = p.Results;
     
-    if ~opts.MultiRes 
-        atlas_t1w = atlases{1};  % T1w-image will always be first element
-        L = prod(patch_size);
-    end
+    atlas_t1w = atlases{1};  % T1w-image will always be first element
+    L = prod(ps.patch_size);
     
     atlas_num = length(atlases);
     
