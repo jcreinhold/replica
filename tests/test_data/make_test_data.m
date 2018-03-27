@@ -10,3 +10,6 @@ test.img(a:b,a:b,a:b) = 100;
 test.img(m,m,m) = 200;
 test.hdr.dime.dim = [3 sz sz sz 1 1 1 1];
 save_untouch_nii(test, 'tests/test_data/test.nii');
+mask = test;
+mask.img(a:b,a:b,a:b) = 1;
+save_untouch_nii(mask, 'tests/test_data/mask.nii');

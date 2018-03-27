@@ -28,5 +28,8 @@ function param_struct = default_param_struct_multires()
     
     % gaussian kernel size
     param_struct.gaussian_kernel_size = [5,5,5];
+    
+    % do WM peak normalization or not (defaults to yes)
+    param_struct.wm_peak_normalize = true;
 end
 

@@ -7,7 +7,7 @@ function [IsubjNorm, scale_subj_to_ref] = wm_peak_normalize_T2w(Isubj, threshold
 % images, see fcm_wmPeakNormalize.m
 
 if nargin == 3
-    [IsubjNorm, scale_subj_to_ref] = wm_ref_normalize(Isubj, Iref, false);
+    [IsubjNorm, scale_subj_to_ref] = wm_ref_normalize(Isubj, Iref);
 elseif nargin == 2
     Isubj_fg = Isubj((Isubj > threshold));
     [f_subj, x_subj] = ksdensity(Isubj_fg, 'npoints', 1000);

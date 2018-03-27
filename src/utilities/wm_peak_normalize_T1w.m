@@ -1,4 +1,4 @@
-function [IsubjNorm, subj_wm_centroid] = wm_peak_normalize_T1w(Isubj, threshold, Iref)
+function [IsubjNorm, scale_subj_to_ref] = wm_peak_normalize_T1w(Isubj, threshold, Iref)
 % Isubj is the subject image, Iref is the reference image.
 % If Iref is not given, then the white matter histogram peak of Isubj is
 % scaled to 1000, else it is scaled to the white matter peak of Iref.
@@ -7,7 +7,7 @@ function [IsubjNorm, subj_wm_centroid] = wm_peak_normalize_T1w(Isubj, threshold,
 % images, see fcm_wmPeakNormalize.m
 
 if nargin == 3
-    [IsubjNorm, subj_wm_centroid] = wm_ref_normalize(Isubj, Iref, true);
+    [IsubjNorm, scale_subj_to_ref] = wm_ref_normalize(Isubj, Iref);
 elseif nargin == 2
     Isubj_fg = Isubj((Isubj > threshold));
     [f_subj, x_subj] = ksdensity(Isubj_fg, 'npoints', 1000);

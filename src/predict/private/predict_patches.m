@@ -16,18 +16,18 @@ function [test_patches, dim, fg] = predict_patches(ss, ps)
     subject_images = {};
     
     if isfield(ss, 't1w') && ~strcmp(ps.target, 't1w')
-        [subject_images{end+1}, dim] = open_atlas(ss.t1w, ps.w4, ps.r4, true);
+        [subject_images{end+1}, dim] = open_atlas(ss.t1w, ps.w4, ps.r4, 'isT1', true);
     else
         error('REPLICA requires a T1w image for training/predicition');
     end
     if isfield(ss, 't2w') && ~strcmp(ps.target, 't2w')
-        [subject_images{end+1}, ~] = open_atlas(ss.t2w, ps.w4, ps.r4, false);
+        [subject_images{end+1}, ~] = open_atlas(ss.t2w, ps.w4, ps.r4, 'isT1', false);
     end
     if isfield(ss, 'pdw') && ~strcmp(ps.target, 'pdw')
-        [subject_images{end+1}, ~] = open_atlas(ss.pdw, ps.w4, ps.r4, false);
+        [subject_images{end+1}, ~] = open_atlas(ss.pdw, ps.w4, ps.r4, 'isT1', false);
     end
     if isfield(ss, 'flair') && ~strcmp(ps.target, 'flair')
-        [subject_images{end+1}, ~] = open_atlas(ss.flair, ps.w4, ps.r4, false);
+        [subject_images{end+1}, ~] = open_atlas(ss.flair, ps.w4, ps.r4, 'isT1', false);
     end
     
     % pull out the patches to be used in prediction

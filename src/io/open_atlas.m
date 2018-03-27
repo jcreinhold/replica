@@ -1,12 +1,10 @@
-function [atlas, dim] = open_atlas(fn, w, r, t1)
+function [atlas, dim] = open_atlas(fn, w, r, varargin)
 %OPEN_ATLAS open an atlas image and preprocess it
 %
 %   Args:
 %       fn: filename, full path to nifti file (uncompressed!) to open
 %       w: see [1] in context features
 %       r: see [1] in context features
-%       t1: boolean flag, use T1w wm peak normalization or use alternative
-%           wm peak normalization routine
 %
 %   Output:
 %       atlas: opened, normalized, and padded atlas
@@ -16,13 +14,35 @@ function [atlas, dim] = open_atlas(fn, w, r, t1)
 %   [1] A. Jog, et al., ``Random forest regression for magnetic resonance
 %       image synthesis'', Medical Image Analysis, 35:475-488, 2017.
 
+    % parse arguments to account for optional args
+    p = inputParser;
+    p.addParameter('BrainMask', '', @ischar);
+    p.addParameter('WMPeakNormalize', true, @islogical);
+    p.addParameter('isT1', false, @islogical);
+    p.parse(varargin{:})
+    params = p.Results;
+    
     tmp_atlas = load_untouch_nii(fn);
     tmp_atlas = double(tmp_atlas.img);
-    threshold = 0.001 * median(tmp_atlas(:));
-    if t1
-        tmp_atlas = wm_peak_normalize_T1w(tmp_atlas, threshold);
-    else
-        tmp_atlas = wm_peak_normalize_T2w(tmp_atlas, threshold);
+    if params.WMPeakNormalize
+        threshold = 0.001 * median(tmp_atlas(:));
+        if params.BrainMask
+            mask_fn = params.BrainMask;
+            mask = load_untouch_nii(mask_fn);
+            brain = tmp_atlas .* double(mask.img);
+        else
+            brain = tmp_atlas;
+        end
+        if params.isT1
+            [brain, scale_factor] = wm_peak_normalize_T1w(brain, threshold);
+        else
+            [brain, scale_factor] = wm_peak_normalize_T2w(brain, threshold);
+        end
+        if params.BrainMask
+            tmp_atlas = scale_factor * tmp_atlas;
+        else
+            tmp_atlas = brain;
+        end
     end
     dim = size(tmp_atlas); % get original dimension for future processing
     atlas = pad(tmp_atlas, w, r);

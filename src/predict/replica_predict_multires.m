@@ -24,7 +24,10 @@ H = fspecial3('gaussian', ps.gaussian_kernel_size);
 % resolutions over which to calculate rfs
 resolutions = {'low', 'intermediate', 'high'};
 
-[subject, dim] = open_atlas(subject_struct.source, ps.w4{3}, ps.r4{3}, true);
+% open source image with or w/o brainmask for WM peak normalization
+[subject, dim] = get_img(subject_struct, ps);
+
+% get the multiresolution patches and predict/synthesize image
 for r=1:3
     fprintf('getting patches for %s resolution\n', resolutions{r});
     [src, g] = multiresolution(subject, H, r);
@@ -44,5 +47,21 @@ end
 
 % Save the synthesized image
 synth = save_synth(y, subject_struct, ps.w4{3}, ps.r4{3}, dim, fg);
+end
+
+function [subject, dim] = get_img(subject_struct, ps)
+% get the subject image for processing
+
+    if isfield(subject_struct, 'brainmask')
+        [subject, dim] = open_atlas(subject_struct.source, ...
+                                    ps.w4{3}, ps.r4{3}, 'isT1', true, ...
+                                    'BrainMask', subject_struct.brainmask, ...
+                                    'WMPeakNormalize', ps.wm_peak_normalize);
+    else
+        [subject, dim] = open_atlas(subject_struct.source, ...
+                                    ps.w4{3}, ps.r4{3}, 'isT1', true, ...
+                                    'WMPeakNormalize', ps.wm_peak_normalize);
+    end
+    
 end
 

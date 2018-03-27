@@ -1,4 +1,4 @@
-function [IsubjNorm, x] = wm_ref_normalize(Isubj, Iref, t1)
+function [IsubjNorm, x] = wm_ref_normalize(Isubj, Iref)
 %WM_REF_NORMALIZE Isubj is the subject image, Iref is the reference image.
 
     Isubj_fg = Isubj((Isubj > 0));
@@ -18,11 +18,6 @@ function [IsubjNorm, x] = wm_ref_normalize(Isubj, Iref, t1)
     ref_wm_centroid = x_ref(imax);
     scale_subj_to_ref = ref_wm_centroid / subj_wm_centroid;
     IsubjNorm = scale_subj_to_ref * Isubj;
-    
-    if t1
-        x = subj_wm_centroid;
-    else
-        x = scale_subj_to_ref;
-    end
+    x = scale_subj_to_ref;
 end
 
