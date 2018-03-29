@@ -20,6 +20,7 @@ function [atlas, dim] = open_atlas(fn, w, r, varargin)
     p.addParameter('WMPeakNormalize', true, @islogical);
     p.addParameter('isT1', false, @islogical);
     p.addParameter('fcmeans', false, @islogical);
+    p.addParameter('T1wNormImg', []);
     p.parse(varargin{:})
     params = p.Results;
     
@@ -35,7 +36,13 @@ function [atlas, dim] = open_atlas(fn, w, r, varargin)
             brain = tmp_atlas;
         end
         if params.fcmeans
-            [brain, scale_factor] = wm_peak_normalize_fcm(brain, threshold);
+            if params.isT1
+                [brain, scale_factor] = wm_peak_normalize_fcm(brain, threshold);
+            elseif ~isempty(params.T1wNormImg)
+                [brain, scale_factor] = wm_peak_normalize_fcm(brain, threshold, params.T1wNormImg);
+            else
+                error('for FCM, isT1 needs to be true or T1wNormImg needs to be provided');
+            end
         else
             if params.isT1
                 [brain, scale_factor] = wm_peak_normalize_T1w(brain, threshold);

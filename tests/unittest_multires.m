@@ -9,6 +9,7 @@ param_struct = default_param_struct_multires();
 % populate the atlas struct
 atlas_struct.source{1} = 'tests/test_data/test.nii';
 atlas_struct.target{1} = 'tests/test_data/test.nii';
+atlas_struct.brainmasks{1} = '';
 
 %% Train the random forest
 
@@ -18,6 +19,7 @@ replica_rfs = replica_train_multires(atlas_struct, param_struct);
 
 subject_struct.source = 'tests/test_data/test.nii';
 subject_struct.output_filename = 'tests/test_data/test_out.nii';
+subject_struct.brainmask = '';
 replica_predict_multires(subject_struct, param_struct, replica_rfs);
 
 %% Clean up result from test

@@ -15,12 +15,9 @@ function synth = save_synth(test_Y, ss, w, r, dim, fg)
     % setup the data structure for the synthesized image
     subject_synthtrg = pad(zeros(dim), w, r);  % make target img correct size
     subject_synthtrg(fg) = test_Y;
-    i = 4*(w(1) + r)+1:4*(w(1) + r)+dim(1);
-    j = 4*(w(2) + r)+1:4*(w(2) + r)+dim(2);
-    k = 4*(w(3) + r)+1:4*(w(3) + r)+dim(3);
-    
+
     % put synthesized image in correct format
-    synth = subject_synthtrg(i, j, k);
+    synth = unpad(subject_synthtrg, w, r, dim);
     
     % save the synthesized image
     if isfield(ss, 't1w')

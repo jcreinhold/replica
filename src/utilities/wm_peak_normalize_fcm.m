@@ -6,57 +6,35 @@ function [IsubjNorm, scale_subj_to_ref] = wm_peak_normalize_fcm(Isubj, threshold
 % reference.
 
 if nargin == 3
-    Isubj_fg = Isubj((Isubj>0));
-    
-    % get a good starting point for FCM
-    h = histc(Isubj_fg, 0:max(Isubj_fg));
-    h = h(end:-1:1);
-    ch = cumsum(h);
-    th = 0.001*ch(end);
-    gr = find(ch > th);
-    gr = length(ch) - gr(1);
-    subj_robust_max_intensity = gr;
-    
-    % starting point for fcm
-    subj_c_init = [subj_robust_max_intensity/5, subj_robust_max_intensity/2, subj_robust_max_intensity];
-    
-    [~, ~, subj_c_final]=fuzzy_kmeans(Isubj_fg,3, subj_c_init,2,40);
-    
-    % FCM on ref
-    Iref_fg = Iref((Iref>0));
-    
-    % get a good starting point for FCM
-    h = histc(Iref_fg, 0:max(Iref_fg));
-    h = h(end:-1:1);
-    ch = cumsum(h);
-    th = 0.001*ch(end);
-    gr = find(ch > th);
-    gr = length(ch) - gr(1);
-    ref_robust_max_intensity = gr;
-    
-    % starting point for fcm
-    ref_c_init = [ref_robust_max_intensity/5, ref_robust_max_intensity/2, ref_robust_max_intensity];
-    
-    [~, ~, ref_c_final]=fuzzy_kmeans(Iref_fg,3, ref_c_init,2,40);
 
-    subj_wm_centroid = subj_c_final(3);
-    ref_wm_centroid = ref_c_final(3);
+    % FCM on ref
+    fg = Iref > threshold;
+    Iref_fg = Iref(fg);
+    ref_robust_max_intensity = robust_max_intensity(Iref_fg);
     
-    scale_subj_to_ref = ref_wm_centroid/subj_wm_centroid;
+    % starting point for fcm
+    ref_c_init = [ref_robust_max_intensity/5, ...
+                  ref_robust_max_intensity/2, ...
+                  ref_robust_max_intensity];
+    
+    [ref_m, ~, ref_c_final]=fuzzy_kmeans(Iref_fg, 3, ref_c_init, 2, 50);
+
+    ref_wm_centroid = ref_c_final(3);  % pick brightest, so ref must be T1w
+    
+    I_tmp = zeros(size(Isubj));
+    I_tmp(fg) = ref_m(:,3);
+    wm_mask = I_tmp > 0.8;  % want 80% ~confidence for WM
+    subj_wm = Isubj(wm_mask);
+    mean_subj_wm = mean(subj_wm(:));
+    
+    scale_subj_to_ref = ref_wm_centroid/mean_subj_wm;
     
     IsubjNorm = scale_subj_to_ref*Isubj;
     
 elseif nargin==2
     Isubj_fg = Isubj(Isubj>threshold);
     
-    % get a good starting point for FCM
-    h = histc(Isubj_fg, 0:max(Isubj_fg));
-    h = h(end:-1:1);
-    ch = cumsum(h);
-    th = 0.05*ch(end);
-    gr = find(ch > th);
-    gr = length(ch) - gr(1);
-    subj_robust_max_intensity = gr;
+    subj_robust_max_intensity = robust_max_intensity(Isubj_fg);
     
     % starting point for fcm
     subj_c_init = [subj_robust_max_intensity/5, ...
@@ -126,4 +104,16 @@ function [membership, hardseg, centroids] = fuzzy_kmeans(v1, K, c_init, q, max_i
     hardseg(idx1) = 1;
     hardseg(idx2) = 2;
     hardseg(idx3) = 3;
+end
+
+function rbi = robust_max_intensity(Isubj_fg)
+    th_factor = 0.05;  % why this value, idk
+    % get a good starting point for FCM
+    h = histc(Isubj_fg, 0:max(Isubj_fg));
+    h = h(end:-1:1);
+    ch = cumsum(h);
+    th = th_factor*ch(end);
+    gr = find(ch > th);
+    gr = length(ch) - gr(1);
+    rbi = gr;
 end

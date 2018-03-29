@@ -9,8 +9,7 @@ param_struct = default_param_struct_multires();
 % populate the atlas struct
 atlas_struct.source{1} = 'tests/test_data/test.nii';
 atlas_struct.target{1} = 'tests/test_data/test.nii';
-atlas_struct.source_brainmask{1} = 'tests/test_data/mask.nii';
-atlas_struct.target_brainmask{1} = 'tests/test_data/mask.nii';
+atlas_struct.brainmasks{1} = 'tests/test_data/mask.nii';
 
 %% Train the random forest
 
