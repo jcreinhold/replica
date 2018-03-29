@@ -49,6 +49,7 @@ end
 synth = save_synth(y, subject_struct, ps.w4{3}, ps.r4{3}, dim, fg);
 end
 
+
 function [subject, dim] = get_img(subject_struct, ps)
 % get the subject image for processing
 
@@ -56,11 +57,13 @@ function [subject, dim] = get_img(subject_struct, ps)
         [subject, dim] = open_atlas(subject_struct.source, ...
                                     ps.w4{3}, ps.r4{3}, 'isT1', true, ...
                                     'BrainMask', subject_struct.brainmask, ...
-                                    'WMPeakNormalize', ps.wm_peak_normalize);
+                                    'WMPeakNormalize', ps.wm_peak_normalize, ...
+                                    'fcmeans', ps.fcmeans);
     else
         [subject, dim] = open_atlas(subject_struct.source, ...
                                     ps.w4{3}, ps.r4{3}, 'isT1', true, ...
-                                    'WMPeakNormalize', ps.wm_peak_normalize);
+                                    'WMPeakNormalize', ps.wm_peak_normalize, ...
+                                    'fcmeans', ps.fcmeans);
     end
     
 end

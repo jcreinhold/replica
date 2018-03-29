@@ -1,9 +1,9 @@
 function [atlas, dim] = open_atlas(fn, w, r, varargin)
-%OPEN_ATLAS open an atlas image and preprocess it
+%OPEN_ATLAS open an atlas image and preprocess it.
 %
 %   Args:
 %       fn: filename, full path to nifti file (uncompressed!) to open
-%       w: see [1] in context features
+%       w: see [1] in context featurejjs
 %       r: see [1] in context features
 %
 %   Output:
@@ -19,6 +19,7 @@ function [atlas, dim] = open_atlas(fn, w, r, varargin)
     p.addParameter('BrainMask', '', @ischar);
     p.addParameter('WMPeakNormalize', true, @islogical);
     p.addParameter('isT1', false, @islogical);
+    p.addParameter('fcmeans', false, @islogical);
     p.parse(varargin{:})
     params = p.Results;
     
@@ -33,10 +34,14 @@ function [atlas, dim] = open_atlas(fn, w, r, varargin)
         else
             brain = tmp_atlas;
         end
-        if params.isT1
-            [brain, scale_factor] = wm_peak_normalize_T1w(brain, threshold);
+        if params.fcmeans
+            [brain, scale_factor] = wm_peak_normalize_fcm(brain, threshold);
         else
-            [brain, scale_factor] = wm_peak_normalize_T2w(brain, threshold);
+            if params.isT1
+                [brain, scale_factor] = wm_peak_normalize_T1w(brain, threshold);
+            else
+                [brain, scale_factor] = wm_peak_normalize_T2w(brain, threshold);
+            end
         end
         if params.BrainMask
             tmp_atlas = scale_factor * tmp_atlas;

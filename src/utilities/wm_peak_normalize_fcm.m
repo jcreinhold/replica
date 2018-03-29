@@ -1,11 +1,11 @@
-function [IsubjNorm, scale_subj_to_ref] = wm_peak_normalize_fcm(Isubj, Iref)
+function [IsubjNorm, scale_subj_to_ref] = wm_peak_normalize_fcm(Isubj, threshold, Iref)
 % Isubj is the subject image, Iref is the reference image.
 % If Iref is not given, then the white matter histogram peak of Isubj is
 % scaled to 1000, else it is scaled to the white matter peak of Iref.
 % This functions finds the WM centroid using FCM and sets that value to the
 % reference.
 
-if nargin == 2
+if nargin == 3
     Isubj_fg = Isubj((Isubj>0));
     
     % get a good starting point for FCM
@@ -46,9 +46,8 @@ if nargin == 2
     
     IsubjNorm = scale_subj_to_ref*Isubj;
     
-elseif nargin==1
-    threshold = 0;
-    Isubj_fg = Isubj((Isubj>threshold));
+elseif nargin==2
+    Isubj_fg = Isubj(Isubj>threshold);
     
     % get a good starting point for FCM
     h = histc(Isubj_fg, 0:max(Isubj_fg));
@@ -60,9 +59,11 @@ elseif nargin==1
     subj_robust_max_intensity = gr;
     
     % starting point for fcm
-    subj_c_init = [subj_robust_max_intensity/6, subj_robust_max_intensity/2, 3*subj_robust_max_intensity/4];
+    subj_c_init = [subj_robust_max_intensity/5, ...
+                   subj_robust_max_intensity/2, ...
+                   subj_robust_max_intensity];
     
-    [~, ~, subj_c_final]=fuzzy_kmeans(Isubj_fg,3, subj_c_init,2,40);
+    [~, ~, subj_c_final]=fuzzy_kmeans(Isubj_fg, 3, subj_c_init, 2, 50);
     
     wm_peak = subj_c_final(3);
     scale_subj_to_1000 = 1000/wm_peak;
@@ -88,20 +89,16 @@ function [membership, hardseg, centroids] = fuzzy_kmeans(v1, K, c_init, q, max_i
 % max_iter: 50 works. mostly
 
     d_from_centroids = zeros(length(v1(:)), K);
+    membership = zeros(size(d_from_centroids));
     centroids = c_init;
     for iter=1:max_iter
-    %     iter
-    %     centroids
         % calc dist from centroids  to rest of points
         for i=1:K
-            d_from_centroids (:,i) = abs(v1(:)-centroids(i));
+            d_from_centroids(:,i) = abs(v1(:)-centroids(i));
         end
 
         dq_from_centroids = d_from_centroids.^(-2/(q-1));
-        
-        for i=1:K
-            dq_from_centroids(isnan(dq_from_centroids),i) = inf;
-        end
+        dq_from_centroids(isnan(dq_from_centroids)) = inf;
         
         for i=1:K
             membership(:,i) = dq_from_centroids(:,i)./sum(dq_from_centroids,2);
@@ -114,7 +111,6 @@ function [membership, hardseg, centroids] = fuzzy_kmeans(v1, K, c_init, q, max_i
             num_centroid = sum(num_centroid);
             den_centroid = (membership(:,i).^q);
             den_centroid = sum(den_centroid);
-
             centroids(i) = num_centroid/den_centroid;
         end
     end

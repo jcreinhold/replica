@@ -18,6 +18,9 @@ function [patches, fg] = predict_patches_multires(src, ps, res, rs_src)
     N = ps.N{res};
     L = prod(N);
     patches_num = L;
+    % define N2, L2 to enable parfor (raises error otherwise)
+    N2 = false;
+    L2 = false;
     if res > 1
         N2 = ps.N2{res-1};
         L2 = prod(N2);
@@ -35,7 +38,7 @@ function [patches, fg] = predict_patches_multires(src, ps, res, rs_src)
     
     patches = zeros(patches_num+32, n);
     
-    for viter=1:n
+    parfor viter=1:n
         i = I(viter);
         j = J(viter);
         k = K(viter);
@@ -45,7 +48,7 @@ function [patches, fg] = predict_patches_multires(src, ps, res, rs_src)
         ctx_patch = extract_context_patch(src, i, j, k, ...
                                   r1, r2, r3, r4, ...
                                   w1, w2, w3, w4, orig);
-        if res > 1
+        if N2
             [ii2, jj2, kk2] = patch_indices(i, j, k, N2);
             patch2 = reshape(rs_src(ii2, jj2, kk2), [L2, 1]);
             p = [patch1; patch2; ctx_patch];
