@@ -4,6 +4,7 @@
 
 # Prevent uploading of test files
 tmp
+*out*.nii
 
 # Latex documentation
 *.aux

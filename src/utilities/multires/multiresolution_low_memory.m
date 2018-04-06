@@ -1,4 +1,4 @@
-function [imgs, grids] = multiresolution(img, H)
+function [img, grid] = multiresolution(img, H, res)
 %MULTIRESOLUTION create 3 different resolution images based on user input
 %
 %   Args:
@@ -10,11 +10,13 @@ function [imgs, grids] = multiresolution(img, H)
 %       img: reinterpolated or downsampled img
 %       grid: grid on which img was reinterpd or downsamped
 
-    imgs = cell(3,1);
-    grids = cell(3,1);
-    [imgs{3}, grids{3}] = reinterpolate(img);
-    [imgs{2}, grids{2}] = downsample_by_2(imgs{3}, H);
-    [imgs{1}, grids{1}] = downsample_by_2(imgs{2}, H);
+    [img, grid] = reinterpolate(img);
+    if res <= 2
+        [img, grid] = downsample_by_2(img, H);
+    end
+    if res <= 1
+        [img, grid] = downsample_by_2(img, H);
+    end
 end
 
 function [img_interp, interp_grid] = reinterpolate(img)

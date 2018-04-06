@@ -1,4 +1,4 @@
-function [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps, lm)
+function [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps, varargin)
 %GET_TRAIN_PARAMS get parameters necessary to train REPLICA rf,
 %
 %   Args:
@@ -14,8 +14,19 @@ function [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps, lm)
 %       orig: origin (middle of image)
 %       n: size of foreground in voxels
 
-    src_fg = atlas_t1w(atlas_t1w > ps.threshold);
-
+    % parse arguments to account for optional args
+    p = inputParser;
+    p.addParameter('LesionMask', []);
+    p.addParameter('SourceForeground', []);
+    p.parse(varargin{:})
+    params = p.Results;
+    
+    if ~isempty(params.SourceForeground)
+        src_fg = params.SourceForeground;
+    else
+        src_fg = atlas_t1w(atlas_t1w > ps.threshold);
+    end
+    
     yq = quantile(src_fg, 100);
     yq = [0, yq];
     no_quantile_voxels = ps.n_training_samples_per_brain / 100;
@@ -36,7 +47,7 @@ function [I, J, K, orig, n] = get_train_params(atlas_t1w, target, ps, lm)
     indices_idxs = randi(length(curr_idxs), no_quantile_voxels, 1);
     all_training_idxs = [all_training_idxs; curr_idxs(indices_idxs)];
     
-    if nargin > 3
+    if ~isempty(params.LesionMask)
         lesion_idxs = find(lm == 1);
         all_training_idxs = [all_training_idxs; lesion_idxs];
     end

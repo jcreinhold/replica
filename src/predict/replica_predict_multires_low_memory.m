@@ -1,4 +1,4 @@
-function synth = replica_predict_multires(subject_struct, param_struct, replica_rfs)
+function synth = replica_predict_multires_low_memory(subject_struct, param_struct, replica_rfs)
 %REPLICA_PREDICT_MULTIRES takes in the trained REPLICA random forests and 
 % predicts the synthetic image for an input subject image set using
 % multiresolution features
@@ -27,27 +27,26 @@ resolutions = {'low', 'intermediate', 'high'};
 % open source image with or w/o brainmask for WM peak normalization
 [subject, dim] = get_img(subject_struct, ps);
 
-% get the multiresolution patches 
-[src, g] = multiresolution(subject, H);
-
-% predict/synthesize image
+% get the multiresolution patches and predict/synthesize image
 for r=1:3
     fprintf('getting patches for %s resolution\n', resolutions{r});
+    [src, g] = multiresolution_low_memory(subject, H, r);
     if r > 1
         rs_src = interp3(synth, 1);
-        rs_src = interp3(rs_src, g{r}{1}, g{r}{2}, g{r}{3});
+        rs_src = interp3(rs_src, g{1}, g{2}, g{3});
+        [p, fg] = predict_patches_multires(src, ps, r, rs_src);
     else
-        rs_src = [];
+        [p, fg] = predict_patches_multires(src, ps, r, []);
     end
-    [p, fg] = predict_patches_multires(src{r}, ps, r, rs_src);
     fprintf('predict %s resolution image\n', resolutions{r});
     y = predict(replica_rfs{r}, p(:,:)');
     % fill in image with predicted values for next level
-    synth = zeros(size(src{r}));
+    synth = zeros(size(src));
     synth(fg) = y;
 end
+
 % Save the synthesized image
-synth = save_synth(synth, subject_struct, ps.w4{3}, ps.r4{3}, dim, fg);
+synth = save_synth(y, subject_struct, ps.w4{3}, ps.r4{3}, dim, fg);
 end
 
 

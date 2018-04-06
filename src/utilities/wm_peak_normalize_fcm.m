@@ -27,6 +27,7 @@ if nargin == 3
     subj_wm = Isubj(wm_mask);
     mean_subj_wm = mean(subj_wm(:));
     
+    % 
     scale_subj_to_ref = ref_wm_centroid/mean_subj_wm;
     
     IsubjNorm = scale_subj_to_ref*Isubj;

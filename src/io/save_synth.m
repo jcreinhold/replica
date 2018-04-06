@@ -13,8 +13,12 @@ function synth = save_synth(test_Y, ss, w, r, dim, fg)
 %       subject_struct.output_filename (ss.output_filename)
     
     % setup the data structure for the synthesized image
-    subject_synthtrg = pad(zeros(dim), w, r);  % make target img correct size
-    subject_synthtrg(fg) = test_Y;
+    if size(test_Y,2) == 1
+        subject_synthtrg = pad(zeros(dim), w, r);  % make target img correct size
+        subject_synthtrg(fg) = test_Y;
+    else
+        subject_synthtrg = test_Y;
+    end
 
     % put synthesized image in correct format
     synth = unpad(subject_synthtrg, w, r, dim);

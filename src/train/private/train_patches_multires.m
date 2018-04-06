@@ -1,4 +1,5 @@
-function [patches, y] = train_patches_multires(src, trg, ps, res, rs_trg)
+function [patches, y] = train_patches_multires(src, trg, ps, res, rs_trg, ...
+                                                src0, trg0, g)
 %TRAIN_PATCHES_MULTIRES get patches for training REPLICA random forest
 % for target images using all images provided by user
 %
@@ -15,7 +16,10 @@ function [patches, y] = train_patches_multires(src, trg, ps, res, rs_trg)
         % below is a hack to make there be 9000 no_quantile_voxels 
         % (replicates old code behavior)
         ps.n_training_samples_per_brain = 9000 * 100;
-        [I, J, K, orig, n] = get_train_params(src, trg, ps);
+        src_fg = src0(src0 > ps.threshold);
+        src0 = interp3(src0, g{1}, g{2}, g{3});
+        trg0 = interp3(trg0, g{1}, g{2}, g{3});
+        [I, J, K, orig, n] = get_train_params(src0, trg0, ps, 'SourceForeground', src_fg);
     else
         [I, J, K, orig, n, ~] = get_params_multires(src, ps);
     end
