@@ -17,9 +17,7 @@ if nargin == 3
                   ref_robust_max_intensity/2, ...
                   ref_robust_max_intensity];
     
-    [ref_m, ~, ref_c_final]=fuzzy_kmeans(Iref_fg, 3, ref_c_init, 2, 50);
-
-    ref_wm_centroid = ref_c_final(3);  % pick brightest, so ref must be T1w
+    [ref_m, ~, ~]=fuzzy_kmeans(Iref_fg, 3, ref_c_init, 2, 50);
     
     I_tmp = zeros(size(Isubj));
     I_tmp(fg) = ref_m(:,3);
@@ -27,8 +25,7 @@ if nargin == 3
     subj_wm = Isubj(wm_mask);
     mean_subj_wm = mean(subj_wm(:));
     
-    % 
-    scale_subj_to_ref = ref_wm_centroid/mean_subj_wm;
+    scale_subj_to_ref = 1000/mean_subj_wm;
     
     IsubjNorm = scale_subj_to_ref*Isubj;
     
