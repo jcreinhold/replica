@@ -30,7 +30,7 @@ function synth = save_synth(test_Y, ss, w, r, dim, fg, dim_orig)
     
     % resize image to original image size
     if all(dim ~= dim_orig)
-        if ~exist('imresize3')
+        if exist('imresize3')
             synth = imresize3(synth, dim_orig);
         else
             synth = resize3d(synth, dim_orig);
