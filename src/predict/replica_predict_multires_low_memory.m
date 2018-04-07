@@ -1,4 +1,4 @@
-function synth = replica_predict_multires_low_memory(subject_struct, param_struct, replica_rfs)
+function synth = replica_predict_multires_low_memory(subject_struct, param_struct, replica_rfs, varargin)
 %REPLICA_PREDICT_MULTIRES takes in the trained REPLICA random forests and 
 % predicts the synthetic image for an input subject image set using
 % multiresolution features
@@ -7,9 +7,17 @@ function synth = replica_predict_multires_low_memory(subject_struct, param_struc
 %       subject_struct: Has filenames for input subject images
 %       params_struct: Has the parameter set with which REPLICA was trained
 %       replica_rfs: cell array of trained REPLICA random forest
+%       train_dim: dimension (size) of the training images, test images
+%           will be resized to that dimension w/ bicubic interp and AA
 %
 %   Output:
 %       synth: predicted synthetic subject image
+
+% let the user *not* input train_dim at their own discretion
+p = inputParser;
+p.addParameter('train_dim', [], @isnumeric);
+p.parse(varargin{:})
+params = p.Results;
 
 % rename for convenience, since this is used all over
 ps = param_struct;
@@ -25,7 +33,15 @@ H = fspecial3('gaussian', ps.gaussian_kernel_size);
 resolutions = {'low', 'intermediate', 'high'};
 
 % open source image with or w/o brainmask for WM peak normalization
-[subject, dim] = get_img(subject_struct, ps);
+[subject, dim, dim_orig] = get_img(subject_struct, ps, params.train_dim);
+
+% given a warning to user when the geometry of the image will change beyond
+% a threshold value
+if sum(abs(diff(unique(dim ./ dim_orig)))) > 1e-3
+    warning(['the training image and test images are of different' ...
+             'enough dimensions that the geometry of the test images will' ...
+             'substantially change, continue at your own discretion']);
+end
 
 % get the multiresolution patches and predict/synthesize image
 for r=1:3
@@ -45,16 +61,17 @@ for r=1:3
     synth(fg) = y;
 end
 % Save the synthesized image
-synth = save_synth(synth, subject_struct, ps.w4{3}, ps.r4{3}, dim, fg);
+synth = save_synth(synth, subject_struct, ps.w4{3}, ps.r4{3}, dim, fg, dim_orig);
 end
 
 
-function [subject, dim] = get_img(subject_struct, ps)
+function [subject, dim, dim_orig] = get_img(subject_struct, ps, train_dim)
 % get the subject image for processing
-    [subject, dim] = open_atlas(subject_struct.source, ...
+    [subject, dim, dim_orig] = open_atlas(subject_struct.source, ...
                                 ps.w4{3}, ps.r4{3}, ...
                                 'isT1', true, ...
                                 'BrainMask', subject_struct.brainmask, ...
                                 'WMPeakNormalize', ps.wm_peak_normalize, ...
-                                'fcmeans', ps.fcmeans);
+                                'fcmeans', ps.fcmeans, ...
+                                'train_img_dim', train_dim);
 end

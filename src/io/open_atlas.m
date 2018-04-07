@@ -1,14 +1,15 @@
-function [atlas, dim] = open_atlas(fn, w, r, varargin)
+function [atlas, dim, dim_orig] = open_atlas(fn, w, r, varargin)
 %OPEN_ATLAS open an atlas image and preprocess it.
 %
 %   Args:
-%       fn: filename, full path to nifti file (uncompressed!) to open
+%       fn: filename, full path to nifti file to open
 %       w: see [1] in context featurejjs
 %       r: see [1] in context features
 %
 %   Output:
 %       atlas: opened, normalized, and padded atlas
-%       dim: dimension of the original image (used later for synthesis)
+%       dim: dimension of the target image (used later for synthesis)
+%       dim_orig: if resizing, save dimension of the image before resizing
 %
 %   References:
 %   [1] A. Jog, et al., ``Random forest regression for magnetic resonance
@@ -20,7 +21,8 @@ function [atlas, dim] = open_atlas(fn, w, r, varargin)
     p.addParameter('WMPeakNormalize', true, @islogical);
     p.addParameter('isT1', false, @islogical);
     p.addParameter('fcmeans', false, @islogical);
-    p.addParameter('T1wNormImg', []);
+    p.addParameter('T1wNormImg', [], @isnumeric);
+    p.addParameter('train_img_dim', [], @isnumeric);
     p.parse(varargin{:})
     params = p.Results;
     
@@ -56,7 +58,17 @@ function [atlas, dim] = open_atlas(fn, w, r, varargin)
             tmp_atlas = brain;
         end
     end
-    dim = size(tmp_atlas); % get original dimension for future processing
+    if nargout > 2
+        dim_orig = size(tmp_atlas); % get original dimension before padding
+    end
+    % resize test image to training size with bicubic interpolation w/ AA
+    if ~isempty(params.train_img_dim)
+        % don't interpolate image if size is not changing
+        if ~all(size(tmp_atlas) == params.train_img_dim)
+            tmp_atlas = imresize3(tmp_atlas, params.train_img_dim);
+        end
+    end
+    dim = size(tmp_atlas); % get resized dimension before padding for future processing
     atlas = pad(tmp_atlas, w, r);
 end
 
