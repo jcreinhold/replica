@@ -65,7 +65,11 @@ function [atlas, dim, dim_orig] = open_atlas(fn, w, r, varargin)
     if ~isempty(params.train_img_dim)
         % don't interpolate image if size is not changing
         if ~all(size(tmp_atlas) == params.train_img_dim)
-            tmp_atlas = imresize3(tmp_atlas, params.train_img_dim);
+            if ~exist('imresize3')
+                tmp_atlas = imresize3(tmp_atlas, params.train_img_dim);
+            else
+                tmp_atlas = resize3d(tmp_atlas, params.train_img_dim);
+            end
         end
     end
     dim = size(tmp_atlas); % get resized dimension before padding for future processing
