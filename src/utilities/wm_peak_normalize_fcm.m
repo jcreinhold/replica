@@ -21,7 +21,7 @@ if nargin == 3
     
     I_tmp = zeros(size(Isubj));
     I_tmp(fg) = ref_m(:,3);
-    wm_mask = I_tmp > 0.8;  % want 80% ~confidence for WM
+    wm_mask = I_tmp > 0.95;  % want 95% ~confidence for WM
     subj_wm = Isubj(wm_mask);
     mean_subj_wm = mean(subj_wm(:));
     
@@ -102,16 +102,4 @@ function [membership, hardseg, centroids] = fuzzy_kmeans(v1, K, c_init, q, max_i
     hardseg(idx1) = 1;
     hardseg(idx2) = 2;
     hardseg(idx3) = 3;
-end
-
-function rbi = robust_max_intensity(Isubj_fg)
-    th_factor = 0.05;  % why this value, idk
-    % get a good starting point for FCM
-    h = histc(Isubj_fg, 0:max(Isubj_fg));
-    h = h(end:-1:1);
-    ch = cumsum(h);
-    th = th_factor*ch(end);
-    gr = find(ch > th);
-    gr = length(ch) - gr(1);
-    rbi = gr;
 end

@@ -9,8 +9,8 @@ function [IsubjNorm, scale_subj_to_ref] = wm_peak_normalize_T1w(Isubj, threshold
 if nargin == 3
     [IsubjNorm, scale_subj_to_ref] = wm_ref_normalize(Isubj, Iref);
 elseif nargin == 2
-    Isubj_fg = Isubj((Isubj > threshold));
-    [f_subj, x_subj] = ksdensity(Isubj_fg, 'npoints', 1000);
+    Isubj_fg = Isubj(Isubj > threshold);
+    [f_subj, x_subj] = ksdensity(Isubj_fg, 'NumPoints', 1000);
     diff = f_subj(2:end) - f_subj(1:end-1);
     delta = mean(abs(diff));
     [maxt, ~] = peakdet(f_subj, delta);
