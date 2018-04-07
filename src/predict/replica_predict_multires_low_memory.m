@@ -44,9 +44,8 @@ for r=1:3
     synth = zeros(size(src));
     synth(fg) = y;
 end
-
 % Save the synthesized image
-synth = save_synth(y, subject_struct, ps.w4{3}, ps.r4{3}, dim, fg);
+synth = save_synth(synth, subject_struct, ps.w4{3}, ps.r4{3}, dim, fg);
 end
 
 
@@ -59,4 +58,3 @@ function [subject, dim] = get_img(subject_struct, ps)
                                 'WMPeakNormalize', ps.wm_peak_normalize, ...
                                 'fcmeans', ps.fcmeans);
 end
-

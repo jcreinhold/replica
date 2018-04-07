@@ -35,17 +35,19 @@ for r=1:3
     ys = [];
     for iter=1:n_atlas_brains
         % open the source and target images
-        [src, trg] = get_imgs(atlas_struct, ps, iter);
+        [src0, trg0] = get_imgs(atlas_struct, ps, iter);
         fprintf('getting patches for %s resolution on iter %d\n', ...
                 resolutions{r}, iter);
-        [trg, ~] = multiresolution_low_memory(trg, H, r);
-        [src, g] = multiresolution_low_memory(src, H, r);
+        [trg, ~] = multiresolution_low_memory(trg0, H, r);
+        [src, g] = multiresolution_low_memory(src0, H, r);
         if r > 1
-            rs_trg = interp3(trg, 1);
+            [trg_prev, ~] = multiresolution_low_memory(trg, H, r-1);
+            rs_trg = interp3(trg_prev, 1);
             rs_trg = interp3(rs_trg, g{1}, g{2}, g{3});
-            [p, y] = train_patches_multires(src, trg, ps, r, rs_trg);
+            [p, y] = train_patches_multires(src, trg, ps, r, rs_trg, ...
+                                            src0, trg0, g);
         else
-            [p, y] = train_patches_multires(src, trg, ps, r, []);
+            [p, y] = train_patches_multires(src, trg, ps, r, [], [], [], []);
         end
         patches = [patches, p];
         ys = [ys, y];

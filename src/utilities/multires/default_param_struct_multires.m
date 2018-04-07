@@ -33,6 +33,6 @@ function param_struct = default_param_struct_multires()
     param_struct.wm_peak_normalize = true;
     
     % use fuzzy c-means for WM peak normalization or not
-    param_struct.fcmeans = true;
+    param_struct.fcmeans = false;
 end
 

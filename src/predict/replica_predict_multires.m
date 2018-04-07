@@ -60,4 +60,3 @@ function [subject, dim] = get_img(subject_struct, ps)
                                 'WMPeakNormalize', ps.wm_peak_normalize, ...
                                 'fcmeans', ps.fcmeans);
 end
-
