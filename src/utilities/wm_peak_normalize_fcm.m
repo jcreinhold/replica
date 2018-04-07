@@ -21,7 +21,7 @@ if nargin == 3
     
     I_tmp = zeros(size(Isubj));
     I_tmp(fg) = ref_m(:,3);
-    wm_mask = I_tmp > 0.95;  % want 95% ~confidence for WM
+    wm_mask = I_tmp > 0.995;  % want 99.5% ~confidence for WM
     subj_wm = Isubj(wm_mask);
     mean_subj_wm = mean(subj_wm(:));
     
