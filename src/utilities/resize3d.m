@@ -6,11 +6,12 @@ function resized = resize3d(img, target_dim)
     T = affine3d([scale(1) 0 0 0; 0 scale(2) 0 0; 0 0 scale(3) 0; 0 0 0 1]);
     resized = imwarp(img, T, 'cubic');
     if ~all(size(resized) == target_dim)
-        df = floor(abs(target_dim - size(resized))/2);
-        resized = resized(df(1):end-df(1),df(2):end-df(2),df(3):end-df(3));
-        if ~all(size(resized) == target_dim)
+        df = abs(target_dim - size(resized));
+        h = floor(df/2);
+        resized = resized(1+h(1):end-h(1),1+h(2):end-h(2),1+h(3):end-h(3));
+        if any(df >= 10) || ~all(size(resized) == target_dim)
             error(['something went wrong with the resizing, target dim: ' ...
-                   '%d x %d x %d, actual dim: %d x %d x %d'], target_dim, size(resized))
+                   '%d x %d x %d, resized dim: %d x %d x %d'], target_dim, size(resized))
         end
     end
 end
