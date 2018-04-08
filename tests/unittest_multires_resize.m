@@ -19,11 +19,18 @@ atlas_struct.brainmasks{1} = '';
 
 %% Synthesize subject data using the trained random forest
 
-subject_struct.source = 'tests/test_data/test_small.nii';
+% subject_struct.source = 'tests/test_data/test_small.nii';
+% subject_struct.brainmask = '';
+% out_small = 'tests/test_data/test_out_small.nii';
+% subject_struct.output_filename = out_small;
+% replica_predict_multires(subject_struct, param_struct, replica_rfs, 'train_dim', dim);
+
+subject_struct.source = 'tests/test_data/test_odd.nii';
 subject_struct.brainmask = '';
-out = 'tests/test_data/test_out_small.nii';
-subject_struct.output_filename = out;
+out_odd = 'tests/test_data/test_out_odd.nii';
+subject_struct.output_filename = out_odd;
 replica_predict_multires(subject_struct, param_struct, replica_rfs, 'train_dim', dim);
 
 %% Clean up result from test
-%delete(out)
+delete(out_small)
+delete(out_odd)

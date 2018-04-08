@@ -1,4 +1,4 @@
-function [atlas, dim, dim_orig] = open_atlas(fn, w, r, varargin)
+function [atlas, dim, dim_orig, pad_vals] = open_atlas(fn, w, r, varargin)
 %OPEN_ATLAS open an atlas image and preprocess it.
 %
 %   Args:
@@ -61,10 +61,23 @@ function [atlas, dim, dim_orig] = open_atlas(fn, w, r, varargin)
     if nargout > 2
         dim_orig = size(tmp_atlas); % get original dimension before padding
     end
+    if nargout > 3
+        pad_vals = [0 0 0];  % output 0 pad values as default
+    end
     % resize test image to training size with bicubic interpolation w/ AA
     if ~isempty(params.train_img_dim)
+        sz = size(tmp_atlas);
         % don't interpolate image if size is not changing
-        if ~all(size(tmp_atlas) == params.train_img_dim)
+        if ~all(sz == params.train_img_dim)
+            % pad zeros to image if the geometry is different enough
+            if sum(abs(diff(unique(sz ./ params.train_img_dim)))) > 1e-3
+                ar = sz ./ params.train_img_dim;
+                pad_val = round(((max(ar) .* params.train_img_dim) - sz)/2);
+                tmp_atlas = padarray(tmp_atlas, pad_val);
+                if nargout > 3
+                    pad_vals = pad_val;
+                end
+            end
             if exist('imresize3')
                 tmp_atlas = imresize3(tmp_atlas, params.train_img_dim);
             else

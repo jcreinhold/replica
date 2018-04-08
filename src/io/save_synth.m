@@ -1,4 +1,4 @@
-function synth = save_synth(test_Y, ss, w, r, dim, fg, dim_orig)
+function synth = save_synth(test_Y, ss, w, r, dim, fg, dim_orig, pad_val)
 %SAVE_SYNTH save newly synthesized image
 %
 %   Args:
@@ -13,7 +13,7 @@ function synth = save_synth(test_Y, ss, w, r, dim, fg, dim_orig)
 %       (synth is also saved to a file whose name is equal to the name in
 %       subject_struct.output_filename (ss.output_filename)
     
-    if nargin == 6
+    if nargin < 7
         dim_orig = dim;
     end
     
@@ -30,10 +30,27 @@ function synth = save_synth(test_Y, ss, w, r, dim, fg, dim_orig)
     
     % resize image to original image size
     if all(dim ~= dim_orig)
+        if nargin == 8
+            % need to account for padding before resizing
+            dim_real_orig = dim_orig;
+            dim_orig = dim_orig + (2 * pad_val);
+        end
         if exist('imresize3')
             synth = imresize3(synth, dim_orig);
         else
             synth = resize3d(synth, dim_orig);
+        end
+        if nargin == 8
+            % now get rid of extra zero padding used to preserve geometry
+            synth = synth(pad_val(1)+1:end-pad_val(1),...
+                          pad_val(2)+1:end-pad_val(2),...
+                          pad_val(3)+1:end-pad_val(3));
+            if sum(abs(diff(unique(size(synth) ./ dim_real_orig)))) > 1e-3
+                error(['something went wrong with removing padding, ' ...
+                       'synth size: (%d x %d x %d), pad: (%d x %d x %d),' ...
+                       'orignal dim: (%d x %d x %d)'], ...
+                       size(synth), pad_val, dim_real_orig);
+            end
         end
     end
     

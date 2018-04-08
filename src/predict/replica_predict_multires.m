@@ -33,15 +33,7 @@ H = fspecial3('gaussian', ps.gaussian_kernel_size);
 resolutions = {'low', 'intermediate', 'high'};
 
 % open source image with or w/o brainmask for WM peak normalization
-[subject, dim, dim_orig] = get_img(subject_struct, ps, params.train_dim);
-
-% given a warning to user when the geometry of the image will change beyond
-% a threshold value
-if sum(abs(diff(unique(dim ./ dim_orig)))) > 1e-3
-    warning(['the training image and test images are of different' ...
-             'enough dimensions that the geometry of the test images will' ...
-             'substantially change, continue at your own discretion']);
-end
+[subject, dim, dim_orig, pad_val] = get_img(subject_struct, ps, params.train_dim);
 
 % get the multiresolution patches 
 [src, g] = multiresolution(subject, H);
@@ -63,13 +55,13 @@ for r=1:3
     synth(fg) = y;
 end
 % Save the synthesized image
-synth = save_synth(synth, subject_struct, ps.w4{3}, ps.r4{3}, dim, fg, dim_orig);
+synth = save_synth(synth, subject_struct, ps.w4{3}, ps.r4{3}, dim, fg, dim_orig, pad_val);
 end
 
 
-function [subject, dim, dim_orig] = get_img(subject_struct, ps, train_dim)
+function [subject, dim, dim_orig, pad_val] = get_img(subject_struct, ps, train_dim)
 % get the subject image for processing
-    [subject, dim, dim_orig] = open_atlas(subject_struct.source, ...
+    [subject, dim, dim_orig, pad_val] = open_atlas(subject_struct.source, ...
                                 ps.w4{3}, ps.r4{3}, ...
                                 'isT1', true, ...
                                 'BrainMask', subject_struct.brainmask, ...

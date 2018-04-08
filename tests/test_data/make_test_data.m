@@ -29,3 +29,16 @@ smaller.img(a:b,a:b,a:b) = 100;
 smaller.img(m,m,m) = 200;
 smaller.hdr.dime.dim = [3 sz sz sz 1 1 1 1];
 save_untouch_nii(smaller, 'tests/test_data/test_small.nii');
+
+% create odd shape image to test resize/pad function
+smaller = test;
+sz = [25 20 40];
+m = floor(sz/2);
+range = 8;
+a = m-range;
+b = m+range;
+smaller.img = zeros(sz);
+smaller.img(a(1):b(1),a(2):b(2),a(3):b(3)) = 100;
+smaller.img(m(1),m(2),m(3)) = 200;
+smaller.hdr.dime.dim = [3 sz(1) sz(2) sz(3) 1 1 1 1];
+save_untouch_nii(smaller, 'tests/test_data/test_odd.nii');

@@ -1,6 +1,6 @@
 function resized = resize3d(img, target_dim)
 %RESIZE3D poor man's replacement for imresize3 (don't use it if you have
-%imresize3) this currently does *not* filter before down sampling, aliasing
+%imresize3) this currently does *not* filter before down sampling so aliasing
     sz = size(img);
     scale = target_dim ./ sz;
     T = affine3d([scale(1) 0 0 0; 0 scale(2) 0 0; 0 0 scale(3) 0; 0 0 0 1]);
