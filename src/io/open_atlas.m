@@ -34,6 +34,9 @@ function [atlas, dim, dim_orig, pad_vals] = open_atlas(fn, w, r, varargin)
             mask_fn = params.BrainMask;
             mask = load_untouch_nii(mask_fn);
             brain = tmp_atlas .* double(mask.img);
+            if ~isempty(params.T1wNormImg)
+                params.T1wNormImg = params.T1wNormImg .* double(mask.img);
+            end
         else
             brain = tmp_atlas;
         end
