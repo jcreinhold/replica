@@ -3,7 +3,7 @@ function [atlas, dim, dim_orig, pad_vals] = open_atlas(fn, w, r, varargin)
 %
 %   Args:
 %       fn: filename, full path to nifti file to open
-%       w: see [1] in context featurejjs
+%       w: see [1] in context features
 %       r: see [1] in context features
 %
 %   Output:

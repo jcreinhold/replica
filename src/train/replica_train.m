@@ -1,4 +1,4 @@
-function replica_rf = replica_train(atlas_struct, param_struct)
+function replica_rf = replica_train(atlas_struct, param_struct, varargin)
 %REPLICA_TRAIN outputs a trained REPLICA random forest given a set of 
 %   atlases and parameters for training
 %
@@ -11,6 +11,15 @@ function replica_rf = replica_train(atlas_struct, param_struct)
 %   Output:
 %       replica_rf: replica random forest regressor
 
+    % parse arguments to account for optional args
+    p = inputParser;
+    p.addParameter('seed', 999, @isinteger);
+    p.parse(varargin{:})
+    params = p.Results;
+    
+    % set the random seed for reproducability
+    rng(params.seed)
+    
     % initialize some parameters
     n_training_samples = param_struct.no_of_training_samples;
     n_atlas_brains = length(atlas_struct.t1w);

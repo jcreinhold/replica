@@ -1,4 +1,4 @@
-function synth = replica_predict(subject_struct, param_struct, replica_rf)
+function synth = replica_predict(subject_struct, param_struct, replica_rf, varargin)
 %REPLICA_PREDICT takes in the trained REPLICA random forests and predicts 
 %   the synthetic image for an input subject image set.
 %
@@ -10,6 +10,15 @@ function synth = replica_predict(subject_struct, param_struct, replica_rf)
 %   Output:
 %       synth: predicted synthetic subject image
 
+    % parse arguments to account for optional args
+    p = inputParser;
+    p.addParameter('seed', 999, @isinteger);
+    p.parse(varargin{:})
+    params = p.Results;
+    
+    % set the random seed for reproducability
+    rng(params.seed)
+    
     % extract the patches on which to do regression
     fprintf('getting patches for subject\n');
     [test_patches, dim, fg] = predict_patches(subject_struct, param_struct);
