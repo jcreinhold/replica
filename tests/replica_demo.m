@@ -4,6 +4,7 @@
 
 param_struct = default_param_struct();
 param_struct.target = 'flair';
+param_struct.wm_peak_normalize = true;
 
 %% Create atlas from example data
 

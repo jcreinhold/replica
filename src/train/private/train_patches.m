@@ -13,25 +13,35 @@ function [atlas_patches, atlas_Y] = train_patches(as, ps, i)
 
     % open target contrast images
     target_fns = as.(ps.target);
-    target = open_atlas(target_fns{i}, ps.w4, ps.r4, 'isT1', false);
+    target = open_atlas(target_fns{i}, ps.w4, ps.r4, ...
+                        'WMPeakNormalize', ps.wm_peak_normalize, ...
+                        'isT1', strcmp(ps.target, 't1w'));
     
     % open all atlas images and lesion masks and
     % put atlas images in ordered cell for organized processing
     atlases = {};
     
     if isfield(as, 't1w') && ~strcmp(ps.target, 't1w')
-        [atlases{end+1}, ~] = open_atlas(as.t1w{i}, ps.w4, ps.r4, 'isT1', true);
+        [atlases{end+1}, ~] = open_atlas(as.t1w{i}, ps.w4, ps.r4, ...
+                                         'WMPeakNormalize', ps.wm_peak_normalize, ...
+                                         'isT1', true);
     else
         error('REPLICA requires a T1w image for training/predicition');
     end
     if isfield(as, 't2w') && ~strcmp(ps.target, 't2w')
-        [atlases{end+1}, ~] = open_atlas(as.t2w{i}, ps.w4, ps.r4, 'isT1', false);
+        [atlases{end+1}, ~] = open_atlas(as.t2w{i}, ps.w4, ps.r4, ...
+                                         'WMPeakNormalize', ps.wm_peak_normalize, ...
+                                         'isT1', false);
     end
     if isfield(as, 'pdw') && ~strcmp(ps.target, 'pdw')
-        [atlases{end+1}, ~] = open_atlas(as.pdw{i}, ps.w4, ps.r4, 'isT1', false);
+        [atlases{end+1}, ~] = open_atlas(as.pdw{i}, ps.w4, ps.r4, ...
+                                         'WMPeakNormalize', ps.wm_peak_normalize, ...
+                                         'isT1', false);
     end
     if isfield(as, 'flair') && ~strcmp(ps.target, 'flair')
-        [atlases{end+1}, ~] = open_atlas(as.pdw{i}, ps.w4, ps.r4, 'isT1', false);
+        [atlases{end+1}, ~] = open_atlas(as.pdw{i}, ps.w4, ps.r4, ...
+                                         'WMPeakNormalize', ps.wm_peak_normalize, ...
+                                         'isT1', false);
     end
     if isfield(as, 'lesionmask')
         lm = open_lesionmask(as.lesionmask{i}, ps);

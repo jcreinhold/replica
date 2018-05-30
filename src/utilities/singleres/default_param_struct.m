@@ -9,7 +9,7 @@ function param_struct = default_param_struct()
     % number of samples to be used for training
     param_struct.no_of_training_samples = 1E5;
 
-    % user needs to set to 't2w', 'pdw', or 'flair'
+    % user needs to set to 't1w', 't2w', 'pdw', or 'flair'
     param_struct.target = '';
 
     % if you want to use a context patch in the feature set in addition
@@ -35,5 +35,8 @@ function param_struct = default_param_struct()
 
     % MinLeafSize for each tree
     param_struct.MinLeafSize = 5;
+    
+    % do WM peak normalization or not
+    param_struct.wm_peak_normalize = false;
 end
 
