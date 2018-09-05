@@ -8,17 +8,6 @@
 \usepackage{hyperref}
 \usepackage{parskip}
 
-% Algorithm environment
-\usepackage{algorithm}
-\usepackage[noend]{algpseudocode}
-
-% Configure figures
-\usepackage{wrapfig}
-\usepackage{graphicx}
-\usepackage{subcaption}
-\graphicspath{{img/}}
-
-
 %%%%%%%%%%%% INFORMATION %%%%%%%%%%%%%%%
 
 \title{\texttt{replica} Documentation}
@@ -29,8 +18,50 @@
 \begin{document}
 
 \maketitle
-\tableofcontents
 
 \section{Overview}
+
+This package implements the REPLICA image synthesis package outlined in Jog, et
+al. 2017 \cite{jog} in MATLAB. This package has been superseded by the
+\href{https://github.com/jcreinhold/synthit}{synthit} package. Note that this
+package is \emph{not} actively maintained and only put up for archival purposes.
+
+To use the package, set your MATLAB path to include the \texttt{src} directory
+and all of its subfolders. This will allow the package to reach all required 
+functions.
+
+An initial step for all processing will be to create a parameter structure,
+dubbed a \texttt{param\_struct} in the codebase. A default/template
+\texttt{param\_struct} can be constructed by the functions in
+\texttt{src/utilties/singleres/default\_param\_struct.m} and 
+\texttt{src/utilties/multires/default\_param\_struct\_multires.m}, depending on
+whether or not the user wants to synthesize skull-stripped images or not
+(respectively).
+
+\section{Training}
+
+For skull-stripped images, you can use \texttt{replica\_train.m} and for
+non-skull-stripped images you should use \texttt{replica\_train\_multires.m}. If
+you are running this on a memory-constrained system, you should use
+\texttt{replica\_train\_multires\_low\_memory.m} (note that this takes longer
+than the non-low-memory version).
+
+\section{Prediction}
+
+Use the corresponding \texttt{replica\_predict\_*.m} according to what you used
+for training.
+
+\section{Miscellaneous}
+
+If you have difficulty using this package, you can use the original version
+listed \href{https://www.nitrc.org/frs/?group_id=834}{here}. Note that the
+multi-resolution (non-skull-stripped) version is not implemented in this link.
+
+\begin{thebibliography}{9}
+\bibitem{jog} A. Jog, A. Carass, S. Roy, D. L. Pham, and J. L. Prince, 
+``Random forest regression for magnetic resonance image synthesis,'' 
+Med. Image Anal., vol. 35, pp. 475–488, 2017.
+\end{thebibliography}
+
 
 \end{document}

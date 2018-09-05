@@ -5,10 +5,13 @@ REPLICA: An MRI image synthesis algorithm
 The files included implement the algorithm described in [1]. Given a set of
 training images of different contrasts (an atlas), train a random forest 
 regressor to output values of a target contrast. Can use single resolution
-or multiresolution features 
-(although the inputs to either pathway are different!)
- 
-This code has been tested on MATLAB 2017b.
+or multiresolution features (although the inputs to either pathway are different!).
+You can generate/see some (very sparse) documentation in the docs/ directory.
+
+** Note that this package is not actively maintained and has been superseded by
+the synthit python package located here: https://github.com/jcreinhold/synthit **
+
+This code has been tested on MATLAB 2017b and MATLAB 2018a.
 
 Code Author: Amod Jog (v1)
              Jacob Reinhold (v2) (jacob.reinhold@jhu.edu)
